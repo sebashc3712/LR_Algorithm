@@ -1,0 +1,19 @@
+Mientras Max_Iter
+	#Generar un conjunto de vecinos (COSTOSA!)
+	nodos_cambiar, cuantomejorar, operadorMejora = Estimar un conjunto de vecinos(Si,SparceGraph,ListaTabu,Operador1, Operador2, Operador3, Todos)
+	if mejormejora > cuantomejorar
+		mejormejora = cuantomejorar
+		nodosGanadores = nodos_cambiar
+		OperadorGanador = OperadorMejora
+	
+	#Escoges el mejor de los vecinos
+	Aplicar ahora sí! El operador
+	
+	Vetar de alguna forma la selección realizada (Evitar ciclajes!)
+	If Operador1 Then
+		For Nodos_Cambiar.Size()
+			ListaTabu.add (Nodos_cambiar[i], Tenure)
+	ElseIf Operador2 Then
+		ListaTabu.add (Nodos_Cambiar, Tenure)
+	Else
+		ListaTabu.add (Nodos_Cambiar, Tenure)

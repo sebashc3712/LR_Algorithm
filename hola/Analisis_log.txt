@@ -1,0 +1,11 @@
+Iter -1 Obj 54062.7 Tiempo 3 Mov Split
+Iter -1 Obj 53736.9 Tiempo 12 Mov Split
+Iter 1 Obj 53482.7 Tiempo 17 Mov Insertion Infactible 
+Iter 1 Obj 53482.7 Tiempo 17 Mov Insertion Factible 
+Iter 61 Obj 51488.5 Tiempo 19 Mov Two_opt Infactible 
+Iter 66 Obj 51449.8 Tiempo 19 Mov Two_opt Infactible 
+Iter 70 Obj 50011.1 Tiempo 19 Mov Two_opt Infactible 
+Iter 143 Obj 50805.5 Tiempo 20 Mov Two_opt Infactible 
+Iter 145 Obj 50027.8 Tiempo 20 Mov Two_opt Infactible 
+Iter 146 Obj 48583 Tiempo 20 Mov Two_opt Infactible 
+Iter 430 Obj 48016.9 Tiempo 23 Mov Two_opt Infactible 

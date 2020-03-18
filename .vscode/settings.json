@@ -1,0 +1,14 @@
+{
+    "includePath":[
+        "/opt/ibm/ILOG/CPLEX_Studio128/cplex/include",
+        "/opt/ibm/ILOG/CPLEX_Studio128/concert/include",
+        "home/sebashc/VRPH-1.0.0/inc"
+    ],
+    "path":[
+        "/opt/ibm/ILOG/CPLEX_Studio128/cplex/include",
+        "/opt/ibm/ILOG/CPLEX_Studio128/concert/include",
+        "home/sebashc/VRPH-1.0.0/inc",
+        "opt/ibm/ILOG/CPLEX_Studio128/cplex/lib/x86-64_linux",
+        "opt/ibm/ILOG/CPLEX_Studio128/concert/lib/x86-64_linux"
+    ]
+}

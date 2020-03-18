@@ -1,0 +1,5 @@
+PROBLEM_FILE = hola//resumen/Split_Problem_1.txt
+TRACE_LEVEL = 0
+GAIN23 = NO
+RUNS = 1
+OUTPUT_TOUR_FILE hola//resumen/Split_Tour_1.txt

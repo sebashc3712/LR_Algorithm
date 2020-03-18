@@ -1,0 +1,5 @@
+PROBLEM_FILE = ./test/mdvrp/data-01/Giant_Problem.txt
+TRACE_LEVEL = 0
+GAIN23 = NO
+RUNS = 1
+OUTPUT_TOUR_FILE ./test/mdvrp/data-01/Giant_Tour.txt

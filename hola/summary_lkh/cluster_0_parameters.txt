@@ -1,0 +1,5 @@
+PROBLEM_FILE = hola/summary_lkh/cluster_0.txt
+TRACE_LEVEL = 0
+GAIN23 = NO
+RUNS = 1
+OUTPUT_TOUR_FILE hola/summary_lkh/partial_cluster_0.txt

@@ -1,0 +1,12 @@
+NAME : hola//resumen/Partial_Problem_1_6.txt.5999088.tour
+COMMENT : Length = 5999088
+COMMENT : Found by LKH [Keld Helsgaun] Thu Jan  3 21:37:09 2019
+TYPE : TOUR
+DIMENSION : 4
+TOUR_SECTION
+1
+2
+3
+4
+-1
+EOF

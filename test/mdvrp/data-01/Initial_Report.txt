@@ -1,0 +1,23 @@
+Funcion_objetivo = 0
+Costo_rutas = 0
+Costo_nrutas = 0
+Costo_depositos = 0
+
+demanda_ruta 1 : 0 -> Factible
+
+deposito 1 -> cerrado 
+deposito 2 -> cerrado 
+deposito 3 -> cerrado 
+
+Status = Factible
+
+Ruta 1 : 1 56 63 77 113 73 22 104 102 29 12 48 109 83 84 52 55 41 69 44 17 19 27 33 92 112 72 93 82 58 20 96 107 4 108 103 101 24 59 40 89 32 60 64 49 90 79 67 10 28 87 31 57 100 50 9 70 65 42 13 61 21 78 39 68 85 71 75 43 94 8 23 98 97 105 46 47 16 36 80 110 6 76 53 62 37 86 54 14 88 51 45 18 35 91 111 5 38 30 106 15 99 66 25 7 95 11 74 34 26 81 
+
+Numero_Depositos = 0
+Numero_Rutas = 1
+Clusters = 0
+Tamano_Minimo = 111
+
+Tiempo_lkh = 17.9187
+Tiempo_cplex = 0.218035
+Tiempo_ejecucion = 18.4987
