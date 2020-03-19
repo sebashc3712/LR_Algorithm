@@ -1,6 +1,6 @@
 NAME : Giant_Problem.txt.208.tour
 COMMENT : Length = 208
-COMMENT : Found by LKH [Keld Helsgaun] Tue Mar 17 22:29:35 2020
+COMMENT : Found by LKH [Keld Helsgaun] Wed Mar 18 22:08:08 2020
 TYPE : TOUR
 DIMENSION : 15
 TOUR_SECTION

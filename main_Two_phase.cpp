@@ -5127,7 +5127,7 @@ int main(int argc, char**argv) {
 
         dist_t temp_excess{0.0};
 
-        /*
+
         ofstream RelocFile("RelocFile.csv");
         RelocFile<<"Cluster,X,Y"<<endl;
         for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
@@ -5136,7 +5136,7 @@ int main(int argc, char**argv) {
                 <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
             }
         }
-        RelocFile.close();*/
+        RelocFile.close();
 
 
         ResultInsertion temp_struct;
@@ -5172,7 +5172,7 @@ int main(int argc, char**argv) {
             }
         }
 
-        /*
+
         ofstream RelocFile2("RelocFile.csv");
         RelocFile2<<"Cluster,X,Y"<<endl;
         for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
@@ -5181,7 +5181,7 @@ int main(int argc, char**argv) {
                 <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
             }
         }
-        RelocFile2.close();*/
+        RelocFile2.close();
 
         cout<<"IMPROVED OBJECTIVE FUNCTION = "<<test[0]<<endl;
         cout<<PrintMatrix(post_lkh_clusters,"[","]")<<endl;
@@ -5276,7 +5276,7 @@ int main(int argc, char**argv) {
         }
 
 
-        /*
+
         ofstream RelocFile3("RelocFile.csv");
         RelocFile3<<"Cluster,X,Y"<<endl;
         for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
@@ -5285,7 +5285,7 @@ int main(int argc, char**argv) {
                 <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
             }
         }
-        RelocFile3.close();*/
+        RelocFile3.close();
 
         dist_t first_phase_fo=test[0];
 
@@ -5933,7 +5933,19 @@ int main(int argc, char**argv) {
 
             cout<<"BEST SOLUTION: "<<bestSolution.objective_function<<"<****************"<<endl;
             cout<<"TEST[0]: "<<test[0]<<"<****************"<<endl;
+        }
 
+        for(int clust{0};clust<bestSolution.solution.size();clust++){
+
+            if(bestSolution.solution[clust].size()==0){
+
+                vector<vector<int>>::iterator iter = bestSolution.solution.begin();
+                bestSolution.solution.erase(iter+clust);
+                list<vector<vector<int>>>::iterator iter2 = bestSolution.rec_types.begin();
+                advance(iter2,clust);
+                bestSolution.rec_types.erase(iter2);
+
+            }
         }
 
         cout<<"FIRST PHASE F.O = "<<first_phase_fo<<endl;
@@ -6001,6 +6013,8 @@ int main(int argc, char**argv) {
         }
 
         TrackingFile.close();
+
+        cout<<"Excess of best solution = "<<bestSolution.excess<<endl;
 
         cout<<FunctionObjective(bestSolution.solution,Distancias,bestSolution.rec_types,mydata)[0]<<", ";
         cout<<FunctionObjective(bestSolution.solution,Distancias,bestSolution.rec_types,mydata)[1]<<endl;
