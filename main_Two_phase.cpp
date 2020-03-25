@@ -2541,17 +2541,43 @@ dist_t InsertionEstimator(vector<vector<dist_t>> Distancias, int last_customer, 
         }
 
         dist_t result{9999.0};
+        int best_point{current_customer};
 
         for(int point2{0};point2<reloc_points.size();point2++){
 
             dist_t temp=Distancias[last_customer][reloc_points[point2]]+Distancias[reloc_points[point2]][next_customer]-\
                         Distancias[last_customer][current_customer]-Distancias[current_customer][next_customer];
 
-            if(temp<result){result=temp;}
+            if(temp<result){
+
+                result=temp;
+                best_point=reloc_points[point2];
+
+            }
 
         }
 
-        return result;
+        dist_t reloc_cost{0.0};
+
+        if(current_customer>mydata.ncustomers && best_point<mydata.ncustomers){
+
+            reloc_cost=-1*mydata.penalty_reloc;
+
+        }else if(current_customer>mydata.ncustomers && best_point>mydata.ncustomers){
+
+            reloc_cost=0.0;
+
+        }else if(current_customer<mydata.ncustomers && best_point>mydata.ncustomers){
+
+            reloc_cost=mydata.penalty_reloc;
+
+        }else{
+
+            reloc_cost=0.0;
+
+        }
+
+        return result+reloc_cost;
 }
 
 /****************************************************************************************************************************/
@@ -2561,6 +2587,7 @@ dist_t InsertionEstimator(vector<vector<dist_t>> Distancias, int last_customer, 
 struct ResultInsertion{
     vector<vector<int>> solution;
     dist_t result;
+    dist_t reloc_cost;
 };
 
 ResultInsertion Insertion(vector<vector<int>> solution, vector<vector<dist_t>> Distancias, int last_customer, int current_customer,
@@ -2570,6 +2597,7 @@ ResultInsertion Insertion(vector<vector<int>> solution, vector<vector<dist_t>> D
 
     data_to_return.solution=vector<vector<int>>();
     data_to_return.result=0.0;
+    data_to_return.reloc_cost=0.0;
 
     vector<int> info_cluster=ClusterOfCustomer(solution,current_customer);
     vector<int> reloc_points;
@@ -2611,6 +2639,7 @@ ResultInsertion Insertion(vector<vector<int>> solution, vector<vector<dist_t>> D
     }
 
     dist_t result{9999.0};
+    int best_point{current_customer};
 
     for(int point2{0};point2<reloc_points.size();point2++){
 
@@ -2621,13 +2650,35 @@ ResultInsertion Insertion(vector<vector<int>> solution, vector<vector<dist_t>> D
 
             result=temp;
             solution[info_cluster[0]][info_cluster[1]]=reloc_points[point2];
+            best_point=reloc_points[point2];
 
         }
 
     }
 
+    dist_t reloc_cost{0.0};
+
+    if(current_customer>mydata.ncustomers && best_point<mydata.ncustomers){
+
+        reloc_cost=-1*mydata.penalty_reloc;
+
+    }else if(current_customer>mydata.ncustomers && best_point>mydata.ncustomers){
+
+        reloc_cost=0.0;
+
+    }else if(current_customer<mydata.ncustomers && best_point>mydata.ncustomers){
+
+        reloc_cost=mydata.penalty_reloc;
+
+    }else{
+
+        reloc_cost=0.0;
+
+    }
+
     data_to_return.solution=solution;
-    data_to_return.result=result;
+    data_to_return.result=result+reloc_cost;
+    data_to_return.reloc_cost=reloc_cost;
 
     return data_to_return;
 }
@@ -2704,6 +2755,9 @@ vector<dist_t> FunctionObjective (vector<vector<int>> solution, vector < vector 
         }
     }
     dist_t ex=ExceedsCapacity(solution,demand,mydata);
+
+    cout<<"The excess is.... "<<ex<<endl;
+
     total_distance+=ex;
 
     result.push_back(total_distance);
@@ -5126,8 +5180,9 @@ int main(int argc, char**argv) {
         cout<<"The dimensions of Distancias are "<<Distancias.size()<<" x "<<Distancias[0].size()<<endl;
 
         dist_t temp_excess{0.0};
+        dist_t temp_rcost{0.0};
 
-
+        /*
         ofstream RelocFile("RelocFile.csv");
         RelocFile<<"Cluster,X,Y"<<endl;
         for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
@@ -5136,12 +5191,15 @@ int main(int argc, char**argv) {
                 <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
             }
         }
-        RelocFile.close();
+        RelocFile.close();*/
+
+        dist_t total_cost_reloc{0.0};
 
 
         ResultInsertion temp_struct;
         temp_struct.solution=vector<vector<int>>();
         temp_struct.result=0.0;
+        temp_struct.reloc_cost=0.0;
 
         for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
 
@@ -5153,6 +5211,7 @@ int main(int argc, char**argv) {
                               post_lkh_clusters[cluster][customer+1],mydata);
                     test[0]+=temp_struct.result;
                     post_lkh_clusters=temp_struct.solution;
+                    temp_rcost+=temp_struct.reloc_cost;
 
                 }else if(customer==post_lkh_clusters[cluster].size()-1){
 
@@ -5160,6 +5219,7 @@ int main(int argc, char**argv) {
                                        post_lkh_clusters[cluster][customer],0,mydata);
                     test[0]+=temp_struct.result;
                     post_lkh_clusters=temp_struct.solution;
+                    temp_rcost+=temp_struct.reloc_cost;
 
                 }else{
 
@@ -5167,12 +5227,13 @@ int main(int argc, char**argv) {
                                        post_lkh_clusters[cluster][customer],post_lkh_clusters[cluster][customer+1],mydata);
                     test[0]+=temp_struct.result;
                     post_lkh_clusters=temp_struct.solution;
+                    temp_rcost+=temp_struct.reloc_cost;
 
                 }
             }
         }
 
-
+        /*
         ofstream RelocFile2("RelocFile.csv");
         RelocFile2<<"Cluster,X,Y"<<endl;
         for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
@@ -5181,7 +5242,7 @@ int main(int argc, char**argv) {
                 <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
             }
         }
-        RelocFile2.close();
+        RelocFile2.close();*/
 
         cout<<"IMPROVED OBJECTIVE FUNCTION = "<<test[0]<<endl;
         cout<<PrintMatrix(post_lkh_clusters,"[","]")<<endl;
@@ -5276,7 +5337,7 @@ int main(int argc, char**argv) {
         }
 
 
-
+        /*
         ofstream RelocFile3("RelocFile.csv");
         RelocFile3<<"Cluster,X,Y"<<endl;
         for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
@@ -5285,9 +5346,13 @@ int main(int argc, char**argv) {
                 <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
             }
         }
-        RelocFile3.close();
+        RelocFile3.close();*/
 
         dist_t first_phase_fo=test[0];
+        dist_t first_reloc_cost=temp_rcost;
+
+        vector<vector<int>> first_phase_solution = post_lkh_clusters;
+        list<vector<vector<int>>> first_phase_demand = optimal_rec_types;
 
         cout<<"IMPROVED OBJECTIVE FUNCTION = "<<test[0]<<endl;
         cout<<PrintMatrix(post_lkh_clusters,"[","]")<<endl;
@@ -5298,6 +5363,7 @@ int main(int argc, char**argv) {
             dist_t objective_function;
             list<vector<vector<int>>> rec_types;
             dist_t excess;
+            dist_t reloc_cost;
 
         };
 
@@ -5307,6 +5373,7 @@ int main(int argc, char**argv) {
         bestSolution.objective_function=first_phase_fo;
         bestSolution.rec_types=optimal_rec_types;
         bestSolution.excess=0.0;
+        bestSolution.reloc_cost=0.0;
 
         vector<int> tracking_fo;
         tracking_fo.push_back(bestSolution.objective_function);
@@ -5766,6 +5833,7 @@ int main(int argc, char**argv) {
 
                 result_insertion2.result=0.0;
                 result_insertion2.solution=vector<vector<int>>();
+                result_insertion2.reloc_cost=0.0;
 
                 /*if(node_o == 0){
                     int rand1=rand()%post_lkh_clusters.size();
@@ -5807,6 +5875,16 @@ int main(int argc, char**argv) {
 
                 test[0]=test[0]+result_insertion2.result;
                 post_lkh_clusters=result_insertion2.solution;
+                temp_rcost+=result_insertion2.reloc_cost;
+
+                /*
+                vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
+
+                if(test[0]!=temp_fo[0]){
+                    cout<<"ERROR!"<<endl;
+                    break;
+                }*/
+
                 tabu_list.add(node_o,node_d);
 
                 cout<<"RESULT: "<<result_insertion2.result<<endl;
@@ -5817,6 +5895,7 @@ int main(int argc, char**argv) {
 
                     bestSolution.solution=post_lkh_clusters;
                     bestSolution.objective_function=test[0];
+                    bestSolution.reloc_cost=temp_rcost;
 
                 }
 
@@ -5842,6 +5921,15 @@ int main(int argc, char**argv) {
                 post_lkh_clusters=result_swap2.solution;
                 optimal_rec_types=result_swap2.demand;
                 temp_excess=result_swap2.excess;
+
+                /*
+                vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
+
+                if(test[0]!=temp_fo[0]){
+                    cout<<"ERROR!"<<endl;
+                    break;
+                }*/
+
                 tabu_list.add(node_o,node_d);
 
                 cout<<"RESULT: "<<result_swap2.result<<endl;
@@ -5854,6 +5942,7 @@ int main(int argc, char**argv) {
                     bestSolution.objective_function=test[0];
                     bestSolution.rec_types=optimal_rec_types;
                     bestSolution.excess=temp_excess;
+                    bestSolution.reloc_cost=temp_rcost;
 
                 }
 
@@ -5879,6 +5968,15 @@ int main(int argc, char**argv) {
                 post_lkh_clusters=result_insertion_route.solution;
                 optimal_rec_types=result_insertion_route.demand;
                 temp_excess=result_insertion_route.excess;
+
+                /*
+                vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
+
+                if(test[0]!=temp_fo[0]){
+                    cout<<"ERROR!"<<endl;
+                    break;
+                }*/
+
                 tabu_list.add(node_o,node_d);
 
                 cout<<"RESULT: "<<result_insertion_route.result<<endl;
@@ -5891,6 +5989,7 @@ int main(int argc, char**argv) {
                     bestSolution.objective_function=test[0];
                     bestSolution.rec_types=optimal_rec_types;
                     bestSolution.excess=temp_excess;
+                    bestSolution.reloc_cost=temp_rcost;
 
                 }
 
@@ -5910,6 +6009,15 @@ int main(int argc, char**argv) {
 
                 test[0]=test[0]+result_two_opt.result;
                 post_lkh_clusters=result_two_opt.solution;
+
+                /*
+                vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
+
+                if(test[0]!=temp_fo[0]){
+                    cout<<"ERROR!"<<endl;
+                    break;
+                }*/
+
                 tabu_list.add(node_o,node_d);
 
                 cout<<"RESULT: "<<result_two_opt.result<<endl;
@@ -5920,6 +6028,7 @@ int main(int argc, char**argv) {
 
                     bestSolution.solution=post_lkh_clusters;
                     bestSolution.objective_function=test[0];
+                    bestSolution.reloc_cost=temp_rcost;
 
                 }
 
@@ -5949,6 +6058,7 @@ int main(int argc, char**argv) {
         }
 
         cout<<"FIRST PHASE F.O = "<<first_phase_fo<<endl;
+        cout<<"FIRST RELOC COST = "<<first_reloc_cost<<endl;
         cout<<"IMPROVED OBJECTIVE FUNCTION = "<<bestSolution.objective_function<<endl;
         cout<<"EXCESS OF BEST SOLUTION = "<<bestSolution.excess<<endl;
         cout<<PrintMatrix(bestSolution.solution,"[","]")<<endl;
@@ -5986,22 +6096,25 @@ int main(int argc, char**argv) {
 
         cout<<endl;
 
+        cout<<"Excess of best solution = "<<bestSolution.excess<<endl;
+        cout<<"---------------- "<<bestSolution.reloc_cost<<" ----------------------"<<endl;
+
         cout<<ExceedsCapacity(bestSolution.solution,bestSolution.rec_types,mydata)<<endl;
 
-        ofstream RelocFile4("RelocFile.csv");
-        RelocFile4<<"Cluster,X,Y"<<endl;
+        ofstream RelocFile("RelocFile.csv");
+        RelocFile<<"Cluster,X,Y"<<endl;
 
         for(int cluster{0};cluster<bestSolution.solution.size();cluster++){
 
             for(int customer{0};customer<bestSolution.solution[cluster].size();customer++){
 
-                RelocFile4<<cluster<<","<<C_Data[bestSolution.solution[cluster][customer]-1].x\
+                RelocFile<<cluster<<","<<C_Data[bestSolution.solution[cluster][customer]-1].x\
                 <<","<<C_Data[bestSolution.solution[cluster][customer]-1].y<<endl;
 
             }
         }
 
-        RelocFile4.close();
+        RelocFile.close();
 
         ofstream TrackingFile("TrackingFile.csv");
         TrackingFile<<"F.O"<<endl;
@@ -6014,10 +6127,19 @@ int main(int argc, char**argv) {
 
         TrackingFile.close();
 
-        cout<<"Excess of best solution = "<<bestSolution.excess<<endl;
 
         cout<<FunctionObjective(bestSolution.solution,Distancias,bestSolution.rec_types,mydata)[0]<<", ";
         cout<<FunctionObjective(bestSolution.solution,Distancias,bestSolution.rec_types,mydata)[1]<<endl;
+
+        cout<<"-----------------------------------------------------------------"<<endl;
+
+        cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[0]<<", ";
+        cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[1]<<endl;
+
+        for(int i{1};i<16;i++){
+            cout<<15+1+3*(i-1)<<endl;
+        }
+
 
 
 #endif
