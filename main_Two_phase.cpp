@@ -2559,7 +2559,7 @@ dist_t InsertionEstimator(vector<vector<dist_t>> Distancias, int last_customer, 
 
         dist_t reloc_cost{0.0};
 
-        if(current_customer>mydata.ncustomers && best_point<mydata.ncustomers){
+        if(current_customer>mydata.ncustomers && best_point<=mydata.ncustomers){
 
             reloc_cost=-1*mydata.penalty_reloc;
 
@@ -2567,7 +2567,7 @@ dist_t InsertionEstimator(vector<vector<dist_t>> Distancias, int last_customer, 
 
             reloc_cost=0.0;
 
-        }else if(current_customer<mydata.ncustomers && best_point>mydata.ncustomers){
+        }else if(current_customer<=mydata.ncustomers && best_point>mydata.ncustomers){
 
             reloc_cost=mydata.penalty_reloc;
 
@@ -2658,7 +2658,7 @@ ResultInsertion Insertion(vector<vector<int>> solution, vector<vector<dist_t>> D
 
     dist_t reloc_cost{0.0};
 
-    if(current_customer>mydata.ncustomers && best_point<mydata.ncustomers){
+    if(current_customer>mydata.ncustomers && best_point<=mydata.ncustomers){
 
         reloc_cost=-1*mydata.penalty_reloc;
 
@@ -2666,7 +2666,7 @@ ResultInsertion Insertion(vector<vector<int>> solution, vector<vector<dist_t>> D
 
         reloc_cost=0.0;
 
-    }else if(current_customer<mydata.ncustomers && best_point>mydata.ncustomers){
+    }else if(current_customer<=mydata.ncustomers && best_point>mydata.ncustomers){
 
         reloc_cost=mydata.penalty_reloc;
 
