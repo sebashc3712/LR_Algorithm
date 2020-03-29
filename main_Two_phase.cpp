@@ -2689,7 +2689,7 @@ ResultInsertion Insertion(vector<vector<int>> solution, vector<vector<dist_t>> D
 
 dist_t ExceedsCapacity(vector<vector<int>> solution, list<vector<vector<int>>> demand, mdcvfp mydata){
 
-    cout<<"-"<<solution.size()<<"-"<<demand.size()<<endl;
+    //cout<<"-"<<solution.size()<<"-"<<demand.size()<<endl;
 
     dist_t result{0.0};
 
@@ -2700,7 +2700,7 @@ dist_t ExceedsCapacity(vector<vector<int>> solution, list<vector<vector<int>>> d
         vector<vector<int>> temp_rec_vector = (*itRecTypes);
 
         int recollected{0};
-        cout<<"** "<<solution[clust].size()<<" ** "<<temp_rec_vector.size()<<endl;
+        //cout<<"** "<<solution[clust].size()<<" ** "<<temp_rec_vector.size()<<endl;
 
         for(int custo{0};custo<solution[clust].size();custo++){
 
@@ -5385,7 +5385,7 @@ int main(int argc, char**argv) {
 
         int max_iterations{500};
 
-        int it_perturbation=7;
+        //int it_perturbation=7;
 
         tabu tabu_list;
 
@@ -5896,6 +5896,7 @@ int main(int argc, char**argv) {
                     bestSolution.solution=post_lkh_clusters;
                     bestSolution.objective_function=test[0];
                     bestSolution.reloc_cost=temp_rcost;
+                    bestSolution.rec_types=optimal_rec_types;
 
                 }
 
@@ -6029,6 +6030,7 @@ int main(int argc, char**argv) {
                     bestSolution.solution=post_lkh_clusters;
                     bestSolution.objective_function=test[0];
                     bestSolution.reloc_cost=temp_rcost;
+                    bestSolution.rec_types=optimal_rec_types;
 
                 }
 
@@ -6061,6 +6063,7 @@ int main(int argc, char**argv) {
         cout<<"FIRST RELOC COST = "<<first_reloc_cost<<endl;
         cout<<"IMPROVED OBJECTIVE FUNCTION = "<<bestSolution.objective_function<<endl;
         cout<<"EXCESS OF BEST SOLUTION = "<<bestSolution.excess<<endl;
+        cout<<"RELOC COST OF BEST SOLUTION = "<<bestSolution.reloc_cost<<endl;
         cout<<PrintMatrix(bestSolution.solution,"[","]")<<endl;
 
         dist_t max_dist{0};
@@ -6096,8 +6099,6 @@ int main(int argc, char**argv) {
 
         cout<<endl;
 
-        cout<<"Excess of best solution = "<<bestSolution.excess<<endl;
-        cout<<"---------------- "<<bestSolution.reloc_cost<<" ----------------------"<<endl;
 
         cout<<ExceedsCapacity(bestSolution.solution,bestSolution.rec_types,mydata)<<endl;
 
@@ -6135,10 +6136,6 @@ int main(int argc, char**argv) {
 
         cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[0]<<", ";
         cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[1]<<endl;
-
-        for(int i{1};i<16;i++){
-            cout<<15+1+3*(i-1)<<endl;
-        }
 
 
 

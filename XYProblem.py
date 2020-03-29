@@ -8,14 +8,16 @@ Created on Tue Nov 26 23:37:34 2019
 import pandas as pd
 import matplotlib.pyplot as plt
 
+n_c=20; # Here the numbers of customers must be updated
+
 df=pd.read_csv('PrintProblem.csv',sep=',')
 df=df[['X','Y']]
 
 df1=df.iloc[:1,:]
 
-df2=df.iloc[1:16,:]
+df2=df.iloc[1:(n_c+1),:]
 
-df3=df.iloc[16:,:]
+df3=df.iloc[(n_c+1):,:] 
 
 _=plt.figure()
 _=plt.scatter(df1['X'],df1['Y'],color='red',marker='*', alpha=1, label='Depot')
