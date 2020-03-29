@@ -8,7 +8,7 @@ Created on Tue Nov 26 23:37:34 2019
 import pandas as pd
 import matplotlib.pyplot as plt
 
-n_c=20; # Here the numbers of customers must be updated
+n_c=15; # Here the numbers of customers must be updated
 
 df=pd.read_csv('PrintProblem.csv',sep=',')
 df=df[['X','Y']]

@@ -6128,16 +6128,19 @@ int main(int argc, char**argv) {
 
         TrackingFile.close();
 
-
+        /*
         cout<<FunctionObjective(bestSolution.solution,Distancias,bestSolution.rec_types,mydata)[0]<<", ";
         cout<<FunctionObjective(bestSolution.solution,Distancias,bestSolution.rec_types,mydata)[1]<<endl;
 
         cout<<"-----------------------------------------------------------------"<<endl;
 
         cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[0]<<", ";
-        cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[1]<<endl;
+        cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[1]<<endl;*/
 
+        clock_t clock_final=clock();
+        double alg_time=double(clock_final-t_inicial)/CLOCKS_PER_SEC;
 
+        cout<<"TIME ELAPSED = "<<alg_time<<endl;
 
 #endif
         cout<<"FINAL"<<endl;
