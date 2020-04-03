@@ -4170,45 +4170,47 @@ int main(int argc, char**argv) {
         Depots_Information.close();
 #endif
 
-//        /*****************Adding the relocation points of each customer to the mydata structure****************/
-//        // This part is random
-//
-//        int count_relocation{0};
-//        for(int i{0};i<mydata.customers.size()-1;i++){
-//
-//            mydata.relocation_points.resize(mydata.relocation_points.size()+3);
-//            vector< vector<int> > new_points = GenerateNPoints(3,4,mydata.customers[i].x,mydata.customers[i].y);
-//
-//            for(int j{0};j<new_points.size();j++){
-//
-//                mydata.relocation_points[count_relocation].customerId = i;
-//                mydata.relocation_points[count_relocation].x = new_points[j][0];
-//                mydata.relocation_points[count_relocation].y = new_points[j][1];
-//                count_relocation+=1;
-//
-//            }
-//        }
-//        /******************************************************************************************************/
+        /*****************Adding the relocation points of each customer to the mydata structure****************/
+        // This part is random
 
-        /*************************Reading relocation points****************************************************/
+        int count_relocation{0};
+        for(int i{0};i<mydata.customers.size()-1;i++){
 
-        for(int i{0};i<(mydata.ncustomers*3);i++){
+            mydata.relocation_points.resize(mydata.relocation_points.size()+3);
+            vector< vector<int> > new_points = GenerateNPoints(3,4,mydata.customers[i].x,mydata.customers[i].y);
 
-            mydata.relocation_points.resize(mydata.relocation_points.size()+1);
-            data_input>>mydata.relocation_points[i].customerId;
-            data_input>>mydata.relocation_points[i].x;
-            data_input>>mydata.relocation_points[i].y;
+            for(int j{0};j<new_points.size();j++){
 
+                mydata.relocation_points[count_relocation].customerId = i;
+                mydata.relocation_points[count_relocation].x = new_points[j][0];
+                mydata.relocation_points[count_relocation].y = new_points[j][1];
+                count_relocation+=1;
+
+            }
         }
+        /******************************************************************************************************/
 
-        data_input.close();
+//        /*************************Reading relocation points****************************************************/
+//
+//        for(int i{0};i<(mydata.ncustomers*3);i++){
+//
+//            mydata.relocation_points.resize(mydata.relocation_points.size()+1);
+//            data_input>>mydata.relocation_points[i].customerId;
+//            data_input>>mydata.relocation_points[i].x;
+//            data_input>>mydata.relocation_points[i].y;
+//
+//        }
+//
+//        data_input.close();
+//
+//        /******************************************************************************************************/
 
         /*************************Adding relocation points to C_Data*******************************************/
 
         int size_of_C_Data = C_Data.size();
         cout<<"SIZE OF C_DATA = "<<size_of_C_Data<<endl;
-        //count_relocation=0;
-        int count_relocation{0};
+        count_relocation=0;
+        //int count_relocation{0};
         for (int i = (Ncostumers); i < (Ncostumers+(Ncostumers*3)); i++){
             C_Data[i].id = i+1;
             C_Data[i].x = mydata.relocation_points[count_relocation].x;
