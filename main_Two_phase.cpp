@@ -2776,7 +2776,8 @@ vector<dist_t> FunctionObjective (vector<vector<int>> solution, vector < vector 
 /*************************************Swap inter-route Estimator************************************************************/
 
 dist_t SwapInterRouteEstimator(int customer_1, int customer_2, vector<vector<int>> solution, vector<vector<dist_t>> Distancias,
-                               list<vector<vector<int>>> demand, mdcvfp mydata, dist_t Exceed1){
+                               list<vector<vector<int>>> demand, mdcvfp mydata, dist_t Exceed1, vector<dist_t> excess_clusters,
+                               vector<nclients> C_Data){
 
     //dist_t Exceed1=ExceedsCapacity(solution,demand,mydata);
 
@@ -2877,7 +2878,27 @@ dist_t SwapInterRouteEstimator(int customer_1, int customer_2, vector<vector<int
     int temp_customer = solution[info_cluster1[0]][info_cluster1[1]];
     solution[info_cluster1[0]][info_cluster1[1]]=customer_2;
     solution[info_cluster2[0]][info_cluster2[1]]=temp_customer;
-    dist_t Exceed2=ExceedsCapacity(solution,demand,mydata);
+
+    //dist_t Exceed2=ExceedsCapacity(solution,demand,mydata);
+
+    dist_t Exceed2{0.0};
+
+    dist_t temp_exc1 = excess_clusters[info_cluster1[0]]-C_Data[customer_1-1].dem+\
+                        +C_Data[customer_2-1].dem;
+    dist_t temp_exc2 = excess_clusters[info_cluster2[0]]-C_Data[customer_2-1].dem+\
+                        +C_Data[customer_1-1].dem;
+
+    excess_clusters[info_cluster1[0]]=temp_exc1;
+    excess_clusters[info_cluster2[0]]=temp_exc2;
+
+    for(int i{0};i<excess_clusters.size();i++){
+
+        if(excess_clusters[i]>0.0){
+
+            Exceed2+=excess_clusters[i];
+        }
+    }
+
     result=result-Exceed1+Exceed2;
     //result=result+Exceed2;
 
@@ -2895,10 +2916,12 @@ struct ResultSwap{
     dist_t result;
     list<vector<vector<int>>> demand;
     dist_t excess;
+    vector<dist_t> excess_clusters;
 };
 
 ResultSwap SwapInterRoute(int customer_1, int customer_2, vector<vector<int>> solution, vector<vector<dist_t>> Distancias,
-                          list<vector<vector<int>>> demand, mdcvfp mydata, dist_t Exceed1){
+                          list<vector<vector<int>>> demand, mdcvfp mydata, dist_t Exceed1, vector<dist_t> excess_clusters,
+                          vector<nclients> C_Data){
 
     //dist_t Exceed1=ExceedsCapacity(solution,demand,mydata);
 
@@ -2909,6 +2932,7 @@ ResultSwap SwapInterRoute(int customer_1, int customer_2, vector<vector<int>> so
     data_to_return.result=0.0;
     data_to_return.demand=list<vector<vector<int>>>();
     data_to_return.excess=0.0;
+    data_to_return.excess_clusters=vector<dist_t>();
 
     vector<int> info_cluster1 = ClusterOfCustomer(solution,customer_1);
     vector<int> info_cluster2 = ClusterOfCustomer(solution,customer_2);
@@ -3011,11 +3035,31 @@ ResultSwap SwapInterRoute(int customer_1, int customer_2, vector<vector<int>> so
     solution[info_cluster2[0]][info_cluster2[1]]=temp_customer;
 
     data_to_return.solution=solution;
-    dist_t Exceed2=ExceedsCapacity(solution,demand,mydata);
+    //dist_t Exceed2=ExceedsCapacity(solution,demand,mydata);
+
+    dist_t Exceed2{0.0};
+
+    dist_t temp_exc1 = excess_clusters[info_cluster1[0]]-C_Data[customer_1-1].dem+\
+                        +C_Data[customer_2-1].dem;
+    dist_t temp_exc2 = excess_clusters[info_cluster2[0]]-C_Data[customer_2-1].dem+\
+                        +C_Data[customer_1-1].dem;
+
+    excess_clusters[info_cluster1[0]]=temp_exc1;
+    excess_clusters[info_cluster2[0]]=temp_exc2;
+
+    for(int i{0};i<excess_clusters.size();i++){
+
+        if(excess_clusters[i]>0.0){
+
+            Exceed2+=excess_clusters[i];
+        }
+    }
+
     data_to_return.result=result-Exceed1+Exceed2;
     data_to_return.excess=Exceed2;
     //data_to_return.result=result+Exceed2;
     data_to_return.demand=demand;
+    data_to_return.excess_clusters=excess_clusters;
     //data_to_return.result=result;
 
     //cout<<ExceedsCapacity(data_to_return.solution,demand,mydata)<<" THIS IS THE EXCEED....."<<endl;
@@ -3029,7 +3073,8 @@ ResultSwap SwapInterRoute(int customer_1, int customer_2, vector<vector<int>> so
 /*********************************Insertion-to-route Estimator****************************************************************/
 
 dist_t InsertionRouteEstimator(int customer_o, int customer_d, vector<vector<int>> solution, vector<vector<dist_t>> Distancias,
-                               list<vector<vector<int>>> demand, mdcvfp mydata, dist_t Exceed1){
+                               list<vector<vector<int>>> demand, mdcvfp mydata, dist_t Exceed1, vector<dist_t> excess_clusters,
+                               vector<nclients> C_Data){
 
         //dist_t Exceed1=ExceedsCapacity(solution,demand,mydata);
 
@@ -3203,7 +3248,23 @@ dist_t InsertionRouteEstimator(int customer_o, int customer_d, vector<vector<int
         //PrintMatrix(vector_it2,"[","]");
         (*it2)=vector_it2;
 
-        dist_t Exceed2=ExceedsCapacity(solution,demand,mydata);
+        //dist_t Exceed2=ExceedsCapacity(solution,demand,mydata);
+
+        dist_t Exceed2{0.0};
+
+        dist_t temp_exc1 = excess_clusters[info_cluster1[0]]-C_Data[customer_o-1].dem;
+        dist_t temp_exc2 = excess_clusters[info_cluster2[0]]+C_Data[customer_o-1].dem;
+
+        excess_clusters[info_cluster1[0]]=temp_exc1;
+        excess_clusters[info_cluster2[0]]=temp_exc2;
+
+        for(int i{0};i<excess_clusters.size();i++){
+
+            if(excess_clusters[i]>0.0){
+
+                Exceed2+=excess_clusters[i];
+            }
+        }
 
         result=result-Exceed1+Exceed2;
         //result=result+Exceed2;
@@ -3224,10 +3285,12 @@ struct ResultInsertionRoute{
     list<vector<vector<int>>> demand;
     dist_t result;
     dist_t excess;
+    vector<dist_t> excess_clusters;
 };
 
 ResultInsertionRoute InsertionRouteOpt(int customer_o, int customer_d, vector<vector<int>> solution, vector<vector<dist_t>> Distancias,
-                               list<vector<vector<int>>> demand, mdcvfp mydata, dist_t Exceed1){
+                               list<vector<vector<int>>> demand, mdcvfp mydata, dist_t Exceed1, vector<dist_t> excess_clusters,
+                               vector<nclients> C_Data){
 
         //dist_t Exceed1=ExceedsCapacity(solution,demand,mydata);
 
@@ -3237,6 +3300,7 @@ ResultInsertionRoute InsertionRouteOpt(int customer_o, int customer_d, vector<ve
         data_to_return.result=0.0;
         data_to_return.demand=list<vector<vector<int>>>();
         data_to_return.excess=0.0;
+        data_to_return.excess_clusters=vector<dist_t>();
 
         vector<int> info_cluster1 = ClusterOfCustomer(solution,customer_o);
         vector<int> info_cluster2 = ClusterOfCustomer(solution,customer_d);
@@ -3394,7 +3458,23 @@ ResultInsertionRoute InsertionRouteOpt(int customer_o, int customer_d, vector<ve
 
         //cout<<"Packing changed!!"<<endl;
 
-        dist_t Exceed2=ExceedsCapacity(solution,demand,mydata);
+        //dist_t Exceed2=ExceedsCapacity(solution,demand,mydata);
+
+        dist_t Exceed2{0.0};
+
+        dist_t temp_exc1 = excess_clusters[info_cluster1[0]]-C_Data[customer_o-1].dem;
+        dist_t temp_exc2 = excess_clusters[info_cluster2[0]]+C_Data[customer_o-1].dem;
+
+        excess_clusters[info_cluster1[0]]=temp_exc1;
+        excess_clusters[info_cluster2[0]]=temp_exc2;
+
+        for(int i{0};i<excess_clusters.size();i++){
+
+            if(excess_clusters[i]>0.0){
+
+                Exceed2+=excess_clusters[i];
+            }
+        }
 
         result=result-Exceed1+Exceed2;
         //result=result+Exceed2;
@@ -3403,6 +3483,7 @@ ResultInsertionRoute InsertionRouteOpt(int customer_o, int customer_d, vector<ve
         data_to_return.solution=solution;
         data_to_return.demand=demand;
         data_to_return.excess=Exceed2;
+        data_to_return.excess_clusters=excess_clusters;
 
         //cout<<"End Insertion to route"<<endl;
 
@@ -4170,47 +4251,47 @@ int main(int argc, char**argv) {
         Depots_Information.close();
 #endif
 
-        /*****************Adding the relocation points of each customer to the mydata structure****************/
-        // This part is random
-
-        int count_relocation{0};
-        for(int i{0};i<mydata.customers.size()-1;i++){
-
-            mydata.relocation_points.resize(mydata.relocation_points.size()+3);
-            vector< vector<int> > new_points = GenerateNPoints(3,4,mydata.customers[i].x,mydata.customers[i].y);
-
-            for(int j{0};j<new_points.size();j++){
-
-                mydata.relocation_points[count_relocation].customerId = i;
-                mydata.relocation_points[count_relocation].x = new_points[j][0];
-                mydata.relocation_points[count_relocation].y = new_points[j][1];
-                count_relocation+=1;
-
-            }
-        }
-        /******************************************************************************************************/
-
-//        /*************************Reading relocation points****************************************************/
+//        /*****************Adding the relocation points of each customer to the mydata structure****************/
+//        // This part is random
 //
-//        for(int i{0};i<(mydata.ncustomers*3);i++){
+//        int count_relocation{0};
+//        for(int i{0};i<mydata.customers.size()-1;i++){
 //
-//            mydata.relocation_points.resize(mydata.relocation_points.size()+1);
-//            data_input>>mydata.relocation_points[i].customerId;
-//            data_input>>mydata.relocation_points[i].x;
-//            data_input>>mydata.relocation_points[i].y;
+//            mydata.relocation_points.resize(mydata.relocation_points.size()+3);
+//            vector< vector<int> > new_points = GenerateNPoints(3,4,mydata.customers[i].x,mydata.customers[i].y);
 //
+//            for(int j{0};j<new_points.size();j++){
+//
+//                mydata.relocation_points[count_relocation].customerId = i;
+//                mydata.relocation_points[count_relocation].x = new_points[j][0];
+//                mydata.relocation_points[count_relocation].y = new_points[j][1];
+//                count_relocation+=1;
+//
+//            }
 //        }
-//
-//        data_input.close();
-//
 //        /******************************************************************************************************/
+
+        /*************************Reading relocation points****************************************************/
+
+        for(int i{0};i<(mydata.ncustomers*3);i++){
+
+            mydata.relocation_points.resize(mydata.relocation_points.size()+1);
+            data_input>>mydata.relocation_points[i].customerId;
+            data_input>>mydata.relocation_points[i].x;
+            data_input>>mydata.relocation_points[i].y;
+
+        }
+
+        data_input.close();
+
+        /******************************************************************************************************/
 
         /*************************Adding relocation points to C_Data*******************************************/
 
         int size_of_C_Data = C_Data.size();
         cout<<"SIZE OF C_DATA = "<<size_of_C_Data<<endl;
-        count_relocation=0;
-        //int count_relocation{0};
+        //count_relocation=0;
+        int count_relocation{0};
         for (int i = (Ncostumers); i < (Ncostumers+(Ncostumers*3)); i++){
             C_Data[i].id = i+1;
             C_Data[i].x = mydata.relocation_points[count_relocation].x;
@@ -5212,6 +5293,21 @@ int main(int argc, char**argv) {
 
         dist_t total_cost_reloc{0.0};
 
+        vector<dist_t> excess_per_cluster;
+
+        for(int i{0};i<post_lkh_clusters.size();i++){
+
+            dist_t temp{0.0};
+
+            for(int j{0};j<post_lkh_clusters[i].size();j++){
+
+                temp+=mydata.customers[post_lkh_clusters[i][j]-1].demandVolume;
+            }
+
+            excess_per_cluster.push_back(temp-mydata.volumeVehicle);
+            cout<<"------------- "<<temp-mydata.volumeVehicle<<endl;
+        }
+
 
         ResultInsertion temp_struct;
         temp_struct.solution=vector<vector<int>>();
@@ -5269,6 +5365,7 @@ int main(int argc, char**argv) {
         result_swap.result=0.0;
         result_swap.solution=vector<vector<int>>();
         result_swap.excess=0.0;
+        result_swap.excess_clusters=vector<dist_t>();
 
 
         for(int cluster1{0};cluster1<post_lkh_clusters.size();cluster1++){
@@ -5291,7 +5388,7 @@ int main(int argc, char**argv) {
                             result_swap=SwapInterRoute(post_lkh_clusters[cluster1][cust1],
                                                        post_lkh_clusters[cluster2][cust2],
                                                        post_lkh_clusters, Distancias,optimal_rec_types,
-                                                       mydata,temp_excess);
+                                                       mydata,temp_excess, excess_per_cluster, C_Data);
 
                             //cout<<"The result is = "<<result_swap.result<<endl;
 
@@ -5301,6 +5398,7 @@ int main(int argc, char**argv) {
                                 test[0]+=result_swap.result;
                                 post_lkh_clusters=result_swap.solution;
                                 temp_excess=result_swap.excess;
+                                excess_per_cluster=result_swap.excess_clusters;
 
                             }
                         }
@@ -5314,6 +5412,7 @@ int main(int argc, char**argv) {
         result_insertion_route2.result=0.0;
         result_insertion_route2.solution=vector<vector<int>>();
         result_insertion_route2.excess=0.0;
+        result_insertion_route2.excess_clusters=vector<dist_t>();
 
         for(int cluster1{0};cluster1<post_lkh_clusters.size();cluster1++){
 
@@ -5335,7 +5434,7 @@ int main(int argc, char**argv) {
                             result_insertion_route2=InsertionRouteOpt(post_lkh_clusters[cluster1][cust1],
                                                        post_lkh_clusters[cluster2][cust2],
                                                        post_lkh_clusters, Distancias,optimal_rec_types,
-                                                       mydata,temp_excess);
+                                                       mydata,temp_excess,excess_per_cluster, C_Data);
 
                             //cout<<"The result is = "<<result_insertion_route2.result<<endl;
 
@@ -5345,6 +5444,7 @@ int main(int argc, char**argv) {
                                 post_lkh_clusters=result_insertion_route2.solution;
                                 optimal_rec_types=result_insertion_route2.demand;
                                 temp_excess=result_insertion_route2.excess;
+                                excess_per_cluster=result_insertion_route2.excess_clusters;
 
                             }
                         }
@@ -5562,7 +5662,8 @@ int main(int argc, char**argv) {
                                     temp_imp=SwapInterRouteEstimator(post_lkh_clusters[cluster1][cust1],
                                                                          post_lkh_clusters[cluster2][cust2],
                                                                          post_lkh_clusters, Distancias,
-                                                                         optimal_rec_types, mydata,temp_excess);
+                                                                         optimal_rec_types, mydata,temp_excess,
+                                                                         excess_per_cluster, C_Data);
 
                                     if(temp_imp<improvement && tabu_list.check(post_lkh_clusters[cluster1][cust1],
                                                                                post_lkh_clusters[cluster2][cust2])==false){
@@ -5607,7 +5708,8 @@ int main(int argc, char**argv) {
                                     temp_imp=InsertionRouteEstimator(post_lkh_clusters[cluster1][cust1],
                                                                      post_lkh_clusters[cluster2][cust2],
                                                                      post_lkh_clusters, Distancias,
-                                                                     optimal_rec_types, mydata,temp_excess);
+                                                                     optimal_rec_types, mydata,temp_excess,
+                                                                     excess_per_cluster, C_Data);
 
                                     if(temp_imp<improvement && tabu_list.check(post_lkh_clusters[cluster1][cust1],
                                                                                post_lkh_clusters[cluster2][cust2])==false){
@@ -5933,12 +6035,14 @@ int main(int argc, char**argv) {
                 result_swap2.excess=0.0;
 
                 result_swap2=SwapInterRoute(node_o,node_d,post_lkh_clusters,Distancias,
-                                            optimal_rec_types,mydata,temp_excess);
+                                            optimal_rec_types,mydata,temp_excess,
+                                            excess_per_cluster, C_Data);
 
                 test[0]=test[0]+result_swap2.result;
                 post_lkh_clusters=result_swap2.solution;
                 optimal_rec_types=result_swap2.demand;
                 temp_excess=result_swap2.excess;
+                excess_per_cluster=result_swap2.excess_clusters;
 
                 /*
                 vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
@@ -5978,14 +6082,17 @@ int main(int argc, char**argv) {
                 result_insertion_route.solution=vector<vector<int>>();
                 result_insertion_route.demand=list<vector<vector<int>>>();
                 result_insertion_route.excess=0.0;
+                result_insertion_route.excess_clusters=vector<dist_t>();
 
                 result_insertion_route=InsertionRouteOpt(node_o,node_d,post_lkh_clusters,Distancias,
-                                                         optimal_rec_types,mydata,temp_excess);
+                                                         optimal_rec_types,mydata,temp_excess,
+                                                         excess_per_cluster, C_Data);
 
                 test[0]=test[0]+result_insertion_route.result;
                 post_lkh_clusters=result_insertion_route.solution;
                 optimal_rec_types=result_insertion_route.demand;
                 temp_excess=result_insertion_route.excess;
+                excess_per_cluster=result_insertion_route.excess_clusters;
 
                 /*
                 vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
