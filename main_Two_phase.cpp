@@ -4289,7 +4289,7 @@ int main(int argc, char**argv) {
         /*************************Adding relocation points to C_Data*******************************************/
 
         int size_of_C_Data = C_Data.size();
-        cout<<"SIZE OF C_DATA = "<<size_of_C_Data<<endl;
+        //cout<<"SIZE OF C_DATA = "<<size_of_C_Data<<endl;
         //count_relocation=0;
         int count_relocation{0};
         for (int i = (Ncostumers); i < (Ncostumers+(Ncostumers*3)); i++){
@@ -4404,8 +4404,8 @@ int main(int argc, char**argv) {
             }
         }
 
-        cout<<"DISTANCES CALCULATED"<<endl;
-        PrintDistanceMatrix(Distancias,"[","]");
+        //cout<<"DISTANCES CALCULATED"<<endl;
+        //PrintDistanceMatrix(Distancias,"[","]");
 
 #ifdef NOLKH
         string tmpstr;
@@ -4555,7 +4555,7 @@ int main(int argc, char**argv) {
 
         for(int i = 0; i < Ncostumers; ++i){
 
-            cout<<i<< " PARTIAL SEQUENCE..."<<endl;
+            //cout<<i<< " PARTIAL SEQUENCE..."<<endl;
             vector <int> partial_sequence;
             vector <vector <int> > partial_recTypes_sequence;
             partial_sequence.reserve(Ncostumers); // Change size of the vector Partial_Sequence to Ncustomers
@@ -4581,7 +4581,7 @@ int main(int argc, char**argv) {
 
                 if(temp_demand != 0){
 
-                    cout<<"The last was partial demand!....."<<endl;
+                    //cout<<"The last was partial demand!....."<<endl;
 
                     for(int i{0};i<temp_rec.size();i++){cout<<temp_rec[i]<<", ";}
 
@@ -4614,7 +4614,7 @@ int main(int argc, char**argv) {
 
                     }else{
 
-                        cout<<"Testing customer "<<partial_sequence.front()<<"..."<<endl;
+                        //cout<<"Testing customer "<<partial_sequence.front()<<"..."<<endl;
                         vector <vector<int>> optimal_combination_vector;
                         int available_capacity = Veh_Cap - partial_demand[Group];
                         optimal_combination_vector= CombinationToLoad(available_capacity,mydata.boxes,mydata.numberTypeWaste,
@@ -4633,7 +4633,7 @@ int main(int argc, char**argv) {
 
                         }else{
 
-                            cout<<"Optimal combination found!..."<<endl;
+                            //cout<<"Optimal combination found!..."<<endl;
                             (*itGroups).push_back(partial_sequence.front());
                             temp_rec = optimal_combination_vector[0];
 
@@ -4731,8 +4731,8 @@ int main(int argc, char**argv) {
 		/*****************Writing the file of the solution clusters******************/
 
 
-		cout<<"WE HAVE "<<partial_recollection_types.size()<<" CLUSTERS IN RECTYPES"<<endl;
-		cout<<"AND THE FIRST CLUSTER HAS "<<partial_recollection_types.front().size()<<" CUSTOMERS"<<endl;
+		//cout<<"WE HAVE "<<partial_recollection_types.size()<<" CLUSTERS IN RECTYPES"<<endl;
+		//cout<<"AND THE FIRST CLUSTER HAS "<<partial_recollection_types.front().size()<<" CUSTOMERS"<<endl;
 
 
 		ofstream solucion((testname + "/" + filename +  "cluster.txt").c_str());
@@ -5252,7 +5252,7 @@ int main(int argc, char**argv) {
 //        }
 //        cout<<"PASSED!"<<endl;
 
-
+        /*
         for(int clus{0};clus<post_lkh_clusters.size();clus++){
 
             for(int cust{0};cust<post_lkh_clusters[clus].size();cust++){
@@ -5263,10 +5263,10 @@ int main(int argc, char**argv) {
 
             cout<<endl;
 
-        }
-        cout<<"--------------------------------------"<<endl;
+        }*/
+        //cout<<"--------------------------------------"<<endl;
 
-        PrintMatrix(relocation_decision_matrix,"[","]");
+        //PrintMatrix(relocation_decision_matrix,"[","]");
         PrintMatrix(post_lkh_clusters,"(",")");
 
         vector<dist_t> test;
@@ -5275,7 +5275,7 @@ int main(int argc, char**argv) {
 
         cout<<"TEST FUNCTION OBJECTIVE = "<<test[0]<<endl;
         cout<<"Size of reloc points vector = "<<mydata.relocation_points.size()<<endl;
-        cout<<"The dimensions of Distancias are "<<Distancias.size()<<" x "<<Distancias[0].size()<<endl;
+        //cout<<"The dimensions of Distancias are "<<Distancias.size()<<" x "<<Distancias[0].size()<<endl;
 
         dist_t temp_excess{0.0};
         dist_t temp_rcost{0.0};
@@ -5305,7 +5305,7 @@ int main(int argc, char**argv) {
             }
 
             excess_per_cluster.push_back(temp-mydata.volumeVehicle);
-            cout<<"------------- "<<temp-mydata.volumeVehicle<<endl;
+            //cout<<"------------- "<<temp-mydata.volumeVehicle<<endl;
         }
 
 
@@ -5357,8 +5357,8 @@ int main(int argc, char**argv) {
         }
         RelocFile2.close();*/
 
-        cout<<"IMPROVED OBJECTIVE FUNCTION = "<<test[0]<<endl;
-        cout<<PrintMatrix(post_lkh_clusters,"[","]")<<endl;
+        //cout<<"IMPROVED OBJECTIVE FUNCTION = "<<test[0]<<endl;
+        //cout<<PrintMatrix(post_lkh_clusters,"[","]")<<endl;
 
 
         ResultSwap result_swap;
@@ -5510,19 +5510,19 @@ int main(int argc, char**argv) {
 
         for(int it{0};it<max_iterations;it++){
 
-            cout<<"ITERATION "<<it<<"...."<<endl;
+            //cout<<"ITERATION "<<it<<"...."<<endl;
 
-            cout<<"Size of Tabu List = "<<tabu_list.lista.size()<<endl;
+            //cout<<"Size of Tabu List = "<<tabu_list.lista.size()<<endl;
 
             tabu_list.refresh();
 
-            tabu_list.mostrar();
+            //tabu_list.mostrar();
 
-            cout<<"Tabu updated..."<<endl;
+            //cout<<"Tabu updated..."<<endl;
 
             float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 
-            cout<<"THE RANDOM NUMBER IS "<<r<<endl;
+            //cout<<"THE RANDOM NUMBER IS "<<r<<endl;
 
             string chosen_operator="";
             dist_t improvement = 9999999.0;
@@ -5551,7 +5551,7 @@ int main(int argc, char**argv) {
 
                 /**********Estimation of Insertion****************************/
 
-                cout<<"--> Estimation of Insertion <--"<<endl;
+                //cout<<"--> Estimation of Insertion <--"<<endl;
 
                 dist_t temp_imp=0.0;
 
@@ -5601,7 +5601,7 @@ int main(int argc, char**argv) {
 
                 /****************************Estimation of Two-Opt**********************************************/
 
-                cout<<"--> Estimation of Two-Opt<--"<<endl;
+                //cout<<"--> Estimation of Two-Opt<--"<<endl;
 
                 for(int cluster1{0};cluster1<post_lkh_clusters.size();cluster1++){
 
@@ -5645,7 +5645,7 @@ int main(int argc, char**argv) {
 
                 /****************Estimation of Swap Inter-route*********************************************/
 
-                cout<<"--> Estimation of Swap Inter-Route <--"<<endl;
+                //cout<<"--> Estimation of Swap Inter-Route <--"<<endl;
                 dist_t temp_imp=0.0;
 
                 for(int cluster1{0};cluster1<post_lkh_clusters.size();cluster1++){
@@ -5692,7 +5692,7 @@ int main(int argc, char**argv) {
 
                 /*****************************Estimation of Insertion-to-route**********************************/
 
-                cout<<"--> Estimation of Insertion-to-route<--"<<endl;
+                //cout<<"--> Estimation of Insertion-to-route<--"<<endl;
 
                 for(int cluster1{0};cluster1<post_lkh_clusters.size();cluster1++){
 
@@ -5934,19 +5934,19 @@ int main(int argc, char**argv) {
 
             /***********************************************************************************************/
 
-            cout<<">>>>>>>>>>>>>>>>> "<<chosen_operator<<" <<<<<<<<<<<<<<<<<<<< "<<node_o<<", "<<node_d<<endl;
+            //cout<<">>>>>>>>>>>>>>>>> "<<chosen_operator<<" <<<<<<<<<<<<<<<<<<<< "<<node_o<<", "<<node_d<<endl;
 
             if(chosen_operator=="Insertion"){
 
                 selected_operators[0]+=1;
 
-                cout<<"--* Insertion selected *--"<<endl;
+                //cout<<"--* Insertion selected *--"<<endl;
 
                 /*if(node_o==0){
                     node_o=node_o_insertion;
                 }*/
 
-                PrintMatrix(post_lkh_clusters,"[","]");
+                //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultInsertion result_insertion2;
 
@@ -6006,7 +6006,7 @@ int main(int argc, char**argv) {
 
                 tabu_list.add(node_o,node_d);
 
-                cout<<"RESULT: "<<result_insertion2.result<<endl;
+                //cout<<"RESULT: "<<result_insertion2.result<<endl;
 
                 tracking_fo.push_back(test[0]);
 
@@ -6023,9 +6023,9 @@ int main(int argc, char**argv) {
 
                 selected_operators[2]+=1;
 
-                cout<<"--* Swap Inter-Route selected *--"<<endl;
+                //cout<<"--* Swap Inter-Route selected *--"<<endl;
 
-                PrintMatrix(post_lkh_clusters,"[","]");
+                //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultSwap result_swap2;
 
@@ -6054,7 +6054,7 @@ int main(int argc, char**argv) {
 
                 tabu_list.add(node_o,node_d);
 
-                cout<<"RESULT: "<<result_swap2.result<<endl;
+                //cout<<"RESULT: "<<result_swap2.result<<endl;
 
                 tracking_fo.push_back(test[0]);
 
@@ -6072,9 +6072,9 @@ int main(int argc, char**argv) {
 
                 selected_operators[3]+=1;
 
-                cout<<"--* Insertion-to-route selected *--"<<endl;
+                //cout<<"--* Insertion-to-route selected *--"<<endl;
 
-                PrintMatrix(post_lkh_clusters,"[","]");
+                //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultInsertionRoute result_insertion_route;
 
@@ -6104,7 +6104,7 @@ int main(int argc, char**argv) {
 
                 tabu_list.add(node_o,node_d);
 
-                cout<<"RESULT: "<<result_insertion_route.result<<endl;
+                //cout<<"RESULT: "<<result_insertion_route.result<<endl;
 
                 tracking_fo.push_back(test[0]);
 
@@ -6122,7 +6122,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[1]+=1;
 
-                cout<<"--* Two-Opt selected *--"<<endl;
+                //cout<<"--* Two-Opt selected *--"<<endl;
 
                 ResultTwoOpt result_two_opt;
 
@@ -6145,7 +6145,7 @@ int main(int argc, char**argv) {
 
                 tabu_list.add(node_o,node_d);
 
-                cout<<"RESULT: "<<result_two_opt.result<<endl;
+                //cout<<"RESULT: "<<result_two_opt.result<<endl;
 
                 tracking_fo.push_back(test[0]);
 
@@ -6160,14 +6160,14 @@ int main(int argc, char**argv) {
 
             }else{
 
-                cout<<"Kein Operator"<<endl;
+                //cout<<"Kein Operator"<<endl;
                 selected_operators[4]+=1;
                 //tracking_fo.push_back(test[0]);
 
             }
 
-            cout<<"BEST SOLUTION: "<<bestSolution.objective_function<<"<****************"<<endl;
-            cout<<"TEST[0]: "<<test[0]<<"<****************"<<endl;
+            //cout<<"BEST SOLUTION: "<<bestSolution.objective_function<<"<****************"<<endl;
+            //cout<<"TEST[0]: "<<test[0]<<"<****************"<<endl;
         }
 
         for(int clust{0};clust<bestSolution.solution.size();clust++){
@@ -6224,7 +6224,7 @@ int main(int argc, char**argv) {
         cout<<endl;
 
 
-        cout<<ExceedsCapacity(bestSolution.solution,bestSolution.rec_types,mydata)<<endl;
+        //cout<<ExceedsCapacity(bestSolution.solution,bestSolution.rec_types,mydata)<<endl;
 
         ofstream RelocFile("RelocFile.csv");
         RelocFile<<"Cluster,X,Y"<<endl;
