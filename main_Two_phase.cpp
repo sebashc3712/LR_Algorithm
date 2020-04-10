@@ -2899,7 +2899,7 @@ dist_t SwapInterRouteEstimator(int customer_1, int customer_2, vector<vector<int
         }
     }
 
-    result=result-Exceed1+Exceed2;
+    result=result-Exceed1+(Exceed2*mydata.factor_demand_dist);
     //result=result+Exceed2;
 
     //cout<<ExceedsCapacity(solution,demand,mydata)<<" THIS IS THE EXCEED....."<<endl;
@@ -3055,8 +3055,8 @@ ResultSwap SwapInterRoute(int customer_1, int customer_2, vector<vector<int>> so
         }
     }
 
-    data_to_return.result=result-Exceed1+Exceed2;
-    data_to_return.excess=Exceed2;
+    data_to_return.result=result-Exceed1+(Exceed2*mydata.factor_demand_dist);
+    data_to_return.excess=(Exceed2*mydata.factor_demand_dist);
     //data_to_return.result=result+Exceed2;
     data_to_return.demand=demand;
     data_to_return.excess_clusters=excess_clusters;
@@ -3266,7 +3266,7 @@ dist_t InsertionRouteEstimator(int customer_o, int customer_d, vector<vector<int
             }
         }
 
-        result=result-Exceed1+Exceed2;
+        result=result-Exceed1+(Exceed2*mydata.factor_demand_dist);
         //result=result+Exceed2;
 
         //cout<<ExceedsCapacity(solution,demand,mydata)<<" THIS IS THE EXCEED....."<<endl;
@@ -3476,13 +3476,13 @@ ResultInsertionRoute InsertionRouteOpt(int customer_o, int customer_d, vector<ve
             }
         }
 
-        result=result-Exceed1+Exceed2;
+        result=result-Exceed1+(Exceed2*mydata.factor_demand_dist);
         //result=result+Exceed2;
         //cout<<"Result calculated!!"<<endl;
         data_to_return.result=result;
         data_to_return.solution=solution;
         data_to_return.demand=demand;
-        data_to_return.excess=Exceed2;
+        data_to_return.excess=(Exceed2*mydata.factor_demand_dist);
         data_to_return.excess_clusters=excess_clusters;
 
         //cout<<"End Insertion to route"<<endl;
@@ -3907,9 +3907,7 @@ int main(int argc, char**argv) {
 
 #ifdef MDVRP
         mdcvfp mydata; // Create structure
-        mydata.penalty_reloc = 2.0; // Fixed cost to relocate a customer
-        //mydata.factor_demand_dist = 120.0; // Caluclated with the max_demand/max_dist
-        mydata.factor_demand_dist = 12.0;
+        mydata.penalty_reloc = 10.0; // Fixed cost to relocate a customer
         int mydata_tmp; // Temporal string to store the values which are not necessary
 
         ifstream data_input((testname + "/" + filename + ".txt").c_str());
@@ -4404,6 +4402,24 @@ int main(int argc, char**argv) {
             }
         }
 
+        int count_distances{0};
+        dist_t sum_distances{0.0};
+
+        for(int i{0};i<Distancias.size();i++){
+
+            for(int j{0};j<Distancias[i].size();j++){
+
+                if(Distancias[i][j]>0){
+
+                    count_distances+=1;
+                    sum_distances+=Distancias[i][j];
+
+                }
+            }
+        }
+
+        dist_t average_distances = sum_distances/float(count_distances);
+
         //cout<<"DISTANCES CALCULATED"<<endl;
         //PrintDistanceMatrix(Distancias,"[","]");
 
@@ -4541,6 +4557,12 @@ int main(int argc, char**argv) {
         }
 
         cout<<"TOTAL CUSTOMER DEMAND: "<<total_customer_volume<<endl;
+
+        dist_t average_demand = float(total_customer_volume)/float(mydata.ncustomers);
+
+        mydata.factor_demand_dist = average_distances/average_demand;
+
+        cout<<"FACTOR DEMAND/DISTANCE = "<<mydata.factor_demand_dist<<endl;
 
         list < vector <int> > partial_clusters; // List of clusters
         list < vector <vector <int> > > partial_recollection_types; // List of type of recollection
@@ -5304,7 +5326,7 @@ int main(int argc, char**argv) {
                 temp+=mydata.customers[post_lkh_clusters[i][j]-1].demandVolume;
             }
 
-            excess_per_cluster.push_back(temp-mydata.volumeVehicle);
+            excess_per_cluster.push_back((temp-mydata.volumeVehicle)*mydata.factor_demand_dist);
             //cout<<"------------- "<<temp-mydata.volumeVehicle<<endl;
         }
 
@@ -5515,7 +5537,9 @@ int main(int argc, char**argv) {
 
         cout<<"IMPROVEMENT PHASE..."<<endl;
 
-        int max_iterations{500};
+        int max_iterations = 1000000/pow(mydata.ncustomers,2);
+
+        cout<<"NUMBERS OF ITERATIONS = "<<max_iterations<<endl;
 
         //int it_perturbation=7;
 
