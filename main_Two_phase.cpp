@@ -5322,25 +5322,40 @@ int main(int argc, char**argv) {
 
                     temp_struct=Insertion(post_lkh_clusters,Distancias,0,post_lkh_clusters[cluster][customer],
                               post_lkh_clusters[cluster][customer+1],mydata);
-                    test[0]+=temp_struct.result;
-                    post_lkh_clusters=temp_struct.solution;
-                    temp_rcost+=temp_struct.reloc_cost;
+
+                    if(temp_struct.result<0){
+
+                       test[0]+=temp_struct.result;
+                       post_lkh_clusters=temp_struct.solution;
+                       temp_rcost+=temp_struct.reloc_cost;
+
+                    }
 
                 }else if(customer==post_lkh_clusters[cluster].size()-1){
 
                     temp_struct=Insertion(post_lkh_clusters,Distancias,post_lkh_clusters[cluster][customer-1],
                                        post_lkh_clusters[cluster][customer],0,mydata);
-                    test[0]+=temp_struct.result;
-                    post_lkh_clusters=temp_struct.solution;
-                    temp_rcost+=temp_struct.reloc_cost;
+
+                    if(temp_struct.result<0){
+
+                       test[0]+=temp_struct.result;
+                       post_lkh_clusters=temp_struct.solution;
+                       temp_rcost+=temp_struct.reloc_cost;
+
+                    }
 
                 }else{
 
                     temp_struct=Insertion(post_lkh_clusters,Distancias,post_lkh_clusters[cluster][customer-1],
                                        post_lkh_clusters[cluster][customer],post_lkh_clusters[cluster][customer+1],mydata);
-                    test[0]+=temp_struct.result;
-                    post_lkh_clusters=temp_struct.solution;
-                    temp_rcost+=temp_struct.reloc_cost;
+
+                    if(temp_struct.result<0){
+
+                       test[0]+=temp_struct.result;
+                       post_lkh_clusters=temp_struct.solution;
+                       temp_rcost+=temp_struct.reloc_cost;
+
+                    }
 
                 }
             }
