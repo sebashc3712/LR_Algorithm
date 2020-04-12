@@ -3907,7 +3907,7 @@ int main(int argc, char**argv) {
 
 #ifdef MDVRP
         mdcvfp mydata; // Create structure
-        mydata.penalty_reloc = 10.0; // Fixed cost to relocate a customer
+        mydata.penalty_reloc = 2.0; // Fixed cost to relocate a customer
         int mydata_tmp; // Temporal string to store the values which are not necessary
 
         ifstream data_input((testname + "/" + filename + ".txt").c_str());
@@ -4560,7 +4560,7 @@ int main(int argc, char**argv) {
 
         dist_t average_demand = float(total_customer_volume)/float(mydata.ncustomers);
 
-        mydata.factor_demand_dist = average_distances/average_demand;
+        mydata.factor_demand_dist = (100*average_distances)/average_demand;
 
         cout<<"FACTOR DEMAND/DISTANCE = "<<mydata.factor_demand_dist<<endl;
 
@@ -5326,7 +5326,7 @@ int main(int argc, char**argv) {
                 temp+=mydata.customers[post_lkh_clusters[i][j]-1].demandVolume;
             }
 
-            excess_per_cluster.push_back((temp-mydata.volumeVehicle)*mydata.factor_demand_dist);
+            excess_per_cluster.push_back(temp-mydata.volumeVehicle);
             //cout<<"------------- "<<temp-mydata.volumeVehicle<<endl;
         }
 
@@ -5564,23 +5564,23 @@ int main(int argc, char**argv) {
             //cout<<"THE RANDOM NUMBER IS "<<r<<endl;
 
             string chosen_operator="";
-            dist_t improvement = 9999999.0;
+            dist_t improvement = 9999999999.0;
             int node_o{0};
             int node_d{0};
 
-            dist_t best_insertion=9999.0;
+            dist_t best_insertion=9999999999.0;
             int node_o_insertion=0;
             int node_d_insertion=0;
 
-            dist_t best_two_opt = 9999.0;
+            dist_t best_two_opt = 9999999999.0;
             int node_o_two_opt = 0;
             int node_d_two_opt = 0;
 
-            dist_t best_swapinter=9999.0;
+            dist_t best_swapinter=9999999999.0;
             int node_o_swapinter=0;
             int node_d_swapinter=0;
 
-            dist_t best_insertion_route = 9999.0;
+            dist_t best_insertion_route = 9999999999.0;
             int node_o_insertion_route = 0;
             int node_d_insertion_route = 0;
 
@@ -5979,12 +5979,6 @@ int main(int argc, char**argv) {
 
                 selected_operators[0]+=1;
 
-                //cout<<"--* Insertion selected *--"<<endl;
-
-                /*if(node_o==0){
-                    node_o=node_o_insertion;
-                }*/
-
                 //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultInsertion result_insertion2;
@@ -5993,55 +5987,41 @@ int main(int argc, char**argv) {
                 result_insertion2.solution=vector<vector<int>>();
                 result_insertion2.reloc_cost=0.0;
 
-                /*if(node_o == 0){
-                    int rand1=rand()%post_lkh_clusters.size();
-                    int rand2=rand()%post_lkh_clusters[rand1].size();
-                    node_o=post_lkh_clusters[rand1][rand2];
-                }*/
-
                 vector<int> info_node = ClusterOfCustomer(post_lkh_clusters,node_o);
 
-                //cout<<"Info of node calculated...node "<<node_o<<endl;
-
-                //cout<<"Info node 0 = "<<info_node[0]<<endl;
-                //cout<<"Info node 1 = "<<info_node[1]<<endl;
-
                 if(info_node[1]==0){
-                    //cout<<"Insertion for 0 *****"<<endl;
+
                     result_insertion2=Insertion(post_lkh_clusters,Distancias,
                                             0,post_lkh_clusters[info_node[0]][info_node[1]],
                                             post_lkh_clusters[info_node[0]][info_node[1]+1],
                                             mydata);
-                    //cout<<"Pass Insertion for 0..."<<endl;
+
 
                 }else if(info_node[1]==post_lkh_clusters[info_node[0]].size()-1){
-                    //cout<<"Insertion for 1 *****"<<endl;
+
                    result_insertion2=Insertion(post_lkh_clusters,Distancias,
                                             post_lkh_clusters[info_node[0]][info_node[1]-1],
                                             post_lkh_clusters[info_node[0]][info_node[1]],0,
                                             mydata);
-                    //cout<<"Pass Insertion for 1..."<<endl;
+
                 }else{
-                    //cout<<"Insertion for x *****"<<endl;
+
                     result_insertion2=Insertion(post_lkh_clusters,Distancias,
                                             post_lkh_clusters[info_node[0]][info_node[1]-1],
                                             post_lkh_clusters[info_node[0]][info_node[1]],
                                             post_lkh_clusters[info_node[0]][info_node[1]+1],
                                             mydata);
-                    //cout<<"Pass Insertion for x..."<<endl;
+
                 }
 
                 test[0]=test[0]+result_insertion2.result;
                 post_lkh_clusters=result_insertion2.solution;
                 temp_rcost+=result_insertion2.reloc_cost;
+                optimal_rec_types=optimal_rec_types;
+                temp_excess=temp_excess;
+                excess_per_cluster=excess_per_cluster;
 
-                /*
-                vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
 
-                if(test[0]!=temp_fo[0]){
-                    cout<<"ERROR!"<<endl;
-                    break;
-                }*/
 
                 tabu_list.add(node_o,node_d);
 
@@ -6055,14 +6035,13 @@ int main(int argc, char**argv) {
                     bestSolution.objective_function=test[0];
                     bestSolution.reloc_cost=temp_rcost;
                     bestSolution.rec_types=optimal_rec_types;
+                    bestSolution.excess=temp_excess;
 
                 }
 
             }else if(chosen_operator=="Swap Inter-Route"){
 
                 selected_operators[2]+=1;
-
-                //cout<<"--* Swap Inter-Route selected *--"<<endl;
 
                 //PrintMatrix(post_lkh_clusters,"[","]");
 
@@ -6111,8 +6090,6 @@ int main(int argc, char**argv) {
 
                 selected_operators[3]+=1;
 
-                //cout<<"--* Insertion-to-route selected *--"<<endl;
-
                 //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultInsertionRoute result_insertion_route;
@@ -6132,14 +6109,7 @@ int main(int argc, char**argv) {
                 optimal_rec_types=result_insertion_route.demand;
                 temp_excess=result_insertion_route.excess;
                 excess_per_cluster=result_insertion_route.excess_clusters;
-
-                /*
-                vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
-
-                if(test[0]!=temp_fo[0]){
-                    cout<<"ERROR!"<<endl;
-                    break;
-                }*/
+                temp_rcost=temp_rcost;
 
                 tabu_list.add(node_o,node_d);
 
@@ -6161,7 +6131,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[1]+=1;
 
-                //cout<<"--* Two-Opt selected *--"<<endl;
+                //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultTwoOpt result_two_opt;
 
@@ -6173,14 +6143,10 @@ int main(int argc, char**argv) {
 
                 test[0]=test[0]+result_two_opt.result;
                 post_lkh_clusters=result_two_opt.solution;
-
-                /*
-                vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
-
-                if(test[0]!=temp_fo[0]){
-                    cout<<"ERROR!"<<endl;
-                    break;
-                }*/
+                optimal_rec_types=optimal_rec_types;
+                temp_rcost=temp_rcost;
+                temp_excess=temp_excess;
+                excess_per_cluster=excess_per_cluster;
 
                 tabu_list.add(node_o,node_d);
 
@@ -6194,14 +6160,18 @@ int main(int argc, char**argv) {
                     bestSolution.objective_function=test[0];
                     bestSolution.reloc_cost=temp_rcost;
                     bestSolution.rec_types=optimal_rec_types;
+                    bestSolution.excess=temp_excess;
 
                 }
 
             }else{
 
-                //cout<<"Kein Operator"<<endl;
+//                cout<<"Kein Operator"<<endl;
                 selected_operators[4]+=1;
-                //tracking_fo.push_back(test[0]);
+//                cout<<"Relocation = "<<best_insertion<<endl;
+//                cout<<"Two-Opt = "<<best_two_opt<<endl;
+//                cout<<"Swap = "<<best_swapinter<<endl;
+//                cout<<"Insertion = "<<best_insertion_route<<endl;
 
             }
 
@@ -6262,9 +6232,6 @@ int main(int argc, char**argv) {
 
         cout<<endl;
 
-
-        //cout<<ExceedsCapacity(bestSolution.solution,bestSolution.rec_types,mydata)<<endl;
-
         ofstream RelocFile("RelocFile.csv");
         RelocFile<<"Cluster,X,Y"<<endl;
 
@@ -6290,15 +6257,6 @@ int main(int argc, char**argv) {
         }
 
         TrackingFile.close();
-
-        /*
-        cout<<FunctionObjective(bestSolution.solution,Distancias,bestSolution.rec_types,mydata)[0]<<", ";
-        cout<<FunctionObjective(bestSolution.solution,Distancias,bestSolution.rec_types,mydata)[1]<<endl;
-
-        cout<<"-----------------------------------------------------------------"<<endl;
-
-        cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[0]<<", ";
-        cout<<FunctionObjective(first_phase_solution,Distancias,first_phase_demand,mydata)[1]<<endl;*/
 
         clock_t clock_final=clock();
         double alg_time=double(clock_final-t_inicial)/CLOCKS_PER_SEC;

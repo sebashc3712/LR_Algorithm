@@ -1,40 +1,23 @@
-NAME : Giant_Problem.txt.390.tour
-COMMENT : Length = 390
-COMMENT : Found by LKH [Keld Helsgaun] Fri Apr 10 12:22:38 2020
+NAME : Giant_Problem.txt.208.tour
+COMMENT : Length = 208
+COMMENT : Found by LKH [Keld Helsgaun] Sun Apr 12 12:45:12 2020
 TYPE : TOUR
-DIMENSION : 32
+DIMENSION : 15
 TOUR_SECTION
 1
-13
-11
-32
-10
-9
-8
-7
-6
-5
-4
 3
 2
-12
-31
-30
-29
-28
-16
-27
-26
-25
-24
-23
-20
-22
-21
-18
-19
-17
+11
+9
+10
 15
+5
+12
+4
+13
 14
+6
+7
+8
 -1
 EOF
