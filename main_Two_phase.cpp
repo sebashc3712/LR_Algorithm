@@ -3945,22 +3945,6 @@ int main(int argc, char**argv) {
             data_input >> mydata.customers[i].demand;
             data_input >> mydata.customers[i].frequency;
         }
-        /*
-        int id_reference=0;
-        int id_new=mydata.ncustomers;
-
-        for(int j{0};j<mydata.ncustomers;j++){
-            for(int waste_type{0};waste_type<3;waste_type++){
-                mydata.customers[id_new].id=id_new;
-                mydata.customers[id_new].x=mydata.customers[id_reference].x;
-                mydata.customers[id_new].y=mydata.customers[id_reference].y;
-                mydata.customers[id_new].service=mydata.customers[id_reference].service;
-                mydata.customers[id_new].demand=mydata.customers[id_reference].demand;
-                mydata.customers[id_new].frequency=mydata.customers[id_reference].frequency;
-                id_new++;
-            }
-            id_reference++;
-        }*/
 
         for (int ii=0; ii<mydata.ndepots; ++ii) {
             int i=ii+mydata.ncustomers;//+(mydata.ncustomers*3);
@@ -4013,30 +3997,6 @@ int main(int argc, char**argv) {
                 kk+=1;
             }
         }
-
-        /*
-        int new_id = mydata.ncustomers;
-        int reference_id=0;
-        int reference_size=mydata.boxes.size();
-
-        for(int cust{0};cust<mydata.ncustomers;cust++){
-            for(int counter{0};counter<mydata.numberTypeWaste;counter++){
-                for(int box{0};box<reference_size;box++){
-                    if(mydata.boxes[box].customerId==reference_id){
-                        mydata.boxes.resize(mydata.boxes.size()+1);
-                        mydata.boxes[new_id].customerId=new_id;
-                        mydata.boxes[new_id].boxId=mydata.boxes[box].boxId;
-                        mydata.boxes[new_id].heightBox=mydata.boxes[box].heightBox;
-                        mydata.boxes[new_id].widthBox=mydata.boxes[box].widthBox;
-                        mydata.boxes[new_id].lengthBox=mydata.boxes[box].lengthBox;
-                        mydata.boxes[new_id].fragilityBox=mydata.boxes[box].fragilityBox;
-                        mydata.boxes[new_id].wasteType=mydata.boxes[box].wasteType;
-                    }
-                }
-                new_id++;
-            }
-            reference_id++;
-        }*/
 
         // Calculation of the demandVolumen per customer
         for(int i{0};i<mydata.boxes.size();i++){
@@ -4287,7 +4247,6 @@ int main(int argc, char**argv) {
         /*************************Adding relocation points to C_Data*******************************************/
 
         int size_of_C_Data = C_Data.size();
-        //cout<<"SIZE OF C_DATA = "<<size_of_C_Data<<endl;
         //count_relocation=0;
         int count_relocation{0};
         for (int i = (Ncostumers); i < (Ncostumers+(Ncostumers*3)); i++){
@@ -4420,7 +4379,6 @@ int main(int argc, char**argv) {
 
         dist_t average_distances = sum_distances/float(count_distances);
 
-        //cout<<"DISTANCES CALCULATED"<<endl;
         //PrintDistanceMatrix(Distancias,"[","]");
 
 #ifdef NOLKH
@@ -4603,7 +4561,6 @@ int main(int argc, char**argv) {
 
                 if(temp_demand != 0){
 
-                    //cout<<"The last was partial demand!....."<<endl;
 
                     for(int i{0};i<temp_rec.size();i++){cout<<temp_rec[i]<<", ";}
 
@@ -4636,7 +4593,6 @@ int main(int argc, char**argv) {
 
                     }else{
 
-                        //cout<<"Testing customer "<<partial_sequence.front()<<"..."<<endl;
                         vector <vector<int>> optimal_combination_vector;
                         int available_capacity = Veh_Cap - partial_demand[Group];
                         optimal_combination_vector= CombinationToLoad(available_capacity,mydata.boxes,mydata.numberTypeWaste,
@@ -4655,7 +4611,6 @@ int main(int argc, char**argv) {
 
                         }else{
 
-                            //cout<<"Optimal combination found!..."<<endl;
                             (*itGroups).push_back(partial_sequence.front());
                             temp_rec = optimal_combination_vector[0];
 
@@ -4751,11 +4706,6 @@ int main(int argc, char**argv) {
 		/*****************************************************************************/
 
 		/*****************Writing the file of the solution clusters******************/
-
-
-		//cout<<"WE HAVE "<<partial_recollection_types.size()<<" CLUSTERS IN RECTYPES"<<endl;
-		//cout<<"AND THE FIRST CLUSTER HAS "<<partial_recollection_types.front().size()<<" CUSTOMERS"<<endl;
-
 
 		ofstream solucion((testname + "/" + filename +  "cluster.txt").c_str());
 
@@ -5272,21 +5222,7 @@ int main(int argc, char**argv) {
 //                }
 //
 //        }
-//        cout<<"PASSED!"<<endl;
 
-        /*
-        for(int clus{0};clus<post_lkh_clusters.size();clus++){
-
-            for(int cust{0};cust<post_lkh_clusters[clus].size();cust++){
-
-                cout<<post_lkh_clusters[clus][cust]<<", ";
-
-            }
-
-            cout<<endl;
-
-        }*/
-        //cout<<"--------------------------------------"<<endl;
 
         //PrintMatrix(relocation_decision_matrix,"[","]");
         PrintMatrix(post_lkh_clusters,"(",")");
@@ -5295,23 +5231,11 @@ int main(int argc, char**argv) {
         test=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
         //test={Objective,1};
 
-        cout<<"TEST FUNCTION OBJECTIVE = "<<test[0]<<endl;
+        cout<<"INTIAL FUNCTION OBJECTIVE = "<<test[0]<<endl;
         cout<<"Size of reloc points vector = "<<mydata.relocation_points.size()<<endl;
-        //cout<<"The dimensions of Distancias are "<<Distancias.size()<<" x "<<Distancias[0].size()<<endl;
 
         dist_t temp_excess{0.0};
         dist_t temp_rcost{0.0};
-
-        /*
-        ofstream RelocFile("RelocFile.csv");
-        RelocFile<<"Cluster,X,Y"<<endl;
-        for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
-            for(int customer{0};customer<post_lkh_clusters[cluster].size();customer++){
-                RelocFile<<cluster<<","<<C_Data[post_lkh_clusters[cluster][customer]-1].x\
-                <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
-            }
-        }
-        RelocFile.close();*/
 
         dist_t total_cost_reloc{0.0};
 
@@ -5383,20 +5307,6 @@ int main(int argc, char**argv) {
             }
         }
 
-        /*
-        ofstream RelocFile2("RelocFile.csv");
-        RelocFile2<<"Cluster,X,Y"<<endl;
-        for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
-            for(int customer{0};customer<post_lkh_clusters[cluster].size();customer++){
-                RelocFile2<<cluster<<","<<C_Data[post_lkh_clusters[cluster][customer]-1].x\
-                <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
-            }
-        }
-        RelocFile2.close();*/
-
-        //cout<<"IMPROVED OBJECTIVE FUNCTION = "<<test[0]<<endl;
-        //cout<<PrintMatrix(post_lkh_clusters,"[","]")<<endl;
-
 
         ResultSwap result_swap;
         result_swap.result=0.0;
@@ -5415,12 +5325,6 @@ int main(int argc, char**argv) {
 
                         if(post_lkh_clusters[cluster1][cust1]!=post_lkh_clusters[cluster2][cust2] &&
                            cluster1!=cluster2){
-
-                            /*
-                            cout<<"Cluster 1: "<<cluster1<<", Cluster 2: "<<cluster2<<endl;
-                            cout<<"Customer 1: "<<post_lkh_clusters[cluster1][cust1];
-                            cout<<", Customer 2: "<<post_lkh_clusters[cluster2][cust2]<<endl;
-                            cout<<"*************************************************"<<endl;*/
 
                             result_swap=SwapInterRoute(post_lkh_clusters[cluster1][cust1],
                                                        post_lkh_clusters[cluster2][cust2],
@@ -5462,12 +5366,6 @@ int main(int argc, char**argv) {
                         if(post_lkh_clusters[cluster1][cust1]!=post_lkh_clusters[cluster2][cust2] &&
                            cluster1!=cluster2){
 
-                            /*
-                            cout<<"Cluster 1: "<<cluster1<<", Cluster 2: "<<cluster2<<endl;
-                            cout<<"Customer 1: "<<post_lkh_clusters[cluster1][cust1];
-                            cout<<", Customer 2: "<<post_lkh_clusters[cluster2][cust2]<<endl;
-                            cout<<"*************************************************"<<endl;*/
-
                             result_insertion_route2=InsertionRouteOpt(post_lkh_clusters[cluster1][cust1],
                                                        post_lkh_clusters[cluster2][cust2],
                                                        post_lkh_clusters, Distancias,optimal_rec_types,
@@ -5476,7 +5374,7 @@ int main(int argc, char**argv) {
                             //cout<<"The result is = "<<result_insertion_route2.result<<endl;
 
                             if(result_insertion_route2.result<0){
-                                //cout<<"Changed!"<<endl;
+
                                 test[0]+=result_insertion_route2.result;
                                 post_lkh_clusters=result_insertion_route2.solution;
                                 optimal_rec_types=result_insertion_route2.demand;
@@ -5490,17 +5388,29 @@ int main(int argc, char**argv) {
             }
         }
 
+        ResultTwoOpt result_two_opt2;
+        result_two_opt2.solution=vector<vector<int>>();
+        result_two_opt2.result=0.0;
 
-        /*
-        ofstream RelocFile3("RelocFile.csv");
-        RelocFile3<<"Cluster,X,Y"<<endl;
-        for(int cluster{0};cluster<post_lkh_clusters.size();cluster++){
-            for(int customer{0};customer<post_lkh_clusters[cluster].size();customer++){
-                RelocFile3<<cluster<<","<<C_Data[post_lkh_clusters[cluster][customer]-1].x\
-                <<","<<C_Data[post_lkh_clusters[cluster][customer]-1].y<<endl;
+        for(int clust{0};clust<post_lkh_clusters.size();clust++){
+
+            for(int cust1{0};cust1<post_lkh_clusters[clust].size();cust1++){
+
+                for(int cust2{0};cust2<post_lkh_clusters[clust].size();cust2++){
+
+                    result_two_opt2=TwoOptOperator(post_lkh_clusters[clust][cust1],
+                                                   post_lkh_clusters[clust][cust2],
+                                                   post_lkh_clusters, Distancias,mydata);
+
+                    if(result_two_opt2.result<0){
+
+                        test[0]+=result_two_opt2.result;
+                        post_lkh_clusters=result_two_opt2.solution;
+
+                    }
+                }
             }
         }
-        RelocFile3.close();*/
 
         dist_t first_phase_fo=test[0];
         dist_t first_reloc_cost=temp_rcost;
@@ -5541,7 +5451,7 @@ int main(int argc, char**argv) {
 
         cout<<"NUMBERS OF ITERATIONS = "<<max_iterations<<endl;
 
-        //int it_perturbation=7;
+        int it_perturbation=7;
 
         tabu tabu_list;
 
@@ -5946,28 +5856,39 @@ int main(int argc, char**argv) {
 ////            /************************************************************************************************/
 
             /*****************************Perturbation******************************************************/
+            /*
+            if(it==it_perturbation){
 
-//            if(it==it_perturbation){
-//                int random_operator = rand() % 4 +1;
-//                if(random_operator==1){
-//                    chosen_operator="Insertion";
-//                    node_o=node_o_insertion;
-//                    node_d=node_d_insertion;
-//                }else if(random_operator==2){
-//                    chosen_operator="Swap Inter-Route";
-//                    node_o=node_o_swapinter;
-//                    node_d=node_d_swapinter;
-//                }else if(random_operator==3){
-//                    chosen_operator="Insertion-to-route";
-//                    node_o=node_o_insertion_route;
-//                    node_d=node_d_insertion_route;
-//                }else if(random_operator==4){
-//                    chosen_operator="Two-Opt";
-//                    node_o=node_o_two_opt;
-//                    node_d=node_d_two_opt;
-//                }
-//                it_perturbation+=8;
-//            }
+                int random_operator = rand() % 4 +1;
+                cout<<"RANDOM OPERATOR "<<random_operator<<endl;
+
+                if(random_operator==1){
+
+                    chosen_operator="Insertion";
+                    node_o=node_o_insertion;
+                    node_d=node_d_insertion;
+
+                }else if(random_operator==2){
+
+                    chosen_operator="Swap Inter-Route";
+                    node_o=node_o_swapinter;
+                    node_d=node_d_swapinter;
+
+                }else if(random_operator==3){
+
+                    chosen_operator="Insertion-to-route";
+                    node_o=node_o_insertion_route;
+                    node_d=node_d_insertion_route;
+
+                }else if(random_operator==4){
+
+                    chosen_operator="Two-Opt";
+                    node_o=node_o_two_opt;
+                    node_d=node_d_two_opt;
+
+                }
+                it_perturbation+=8;
+            }*/
 
             /***********************************************************************************************/
 
@@ -5979,7 +5900,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[0]+=1;
 
-                //PrintMatrix(post_lkh_clusters,"[","]");
+                PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultInsertion result_insertion2;
 
@@ -6025,6 +5946,7 @@ int main(int argc, char**argv) {
 
                 tabu_list.add(node_o,node_d);
 
+
                 //cout<<"RESULT: "<<result_insertion2.result<<endl;
 
                 tracking_fo.push_back(test[0]);
@@ -6043,7 +5965,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[2]+=1;
 
-                //PrintMatrix(post_lkh_clusters,"[","]");
+                PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultSwap result_swap2;
 
@@ -6062,13 +5984,6 @@ int main(int argc, char**argv) {
                 temp_excess=result_swap2.excess;
                 excess_per_cluster=result_swap2.excess_clusters;
 
-                /*
-                vector<dist_t> temp_fo=FunctionObjective(post_lkh_clusters,Distancias,optimal_rec_types,mydata);
-
-                if(test[0]!=temp_fo[0]){
-                    cout<<"ERROR!"<<endl;
-                    break;
-                }*/
 
                 tabu_list.add(node_o,node_d);
 
@@ -6090,7 +6005,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[3]+=1;
 
-                //PrintMatrix(post_lkh_clusters,"[","]");
+                PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultInsertionRoute result_insertion_route;
 
@@ -6131,7 +6046,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[1]+=1;
 
-                //PrintMatrix(post_lkh_clusters,"[","]");
+                PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultTwoOpt result_two_opt;
 
@@ -6192,9 +6107,9 @@ int main(int argc, char**argv) {
             }
         }
 
-        cout<<"FIRST PHASE F.O = "<<first_phase_fo<<endl;
-        cout<<"FIRST RELOC COST = "<<first_reloc_cost<<endl;
-        cout<<"IMPROVED OBJECTIVE FUNCTION = "<<bestSolution.objective_function<<endl;
+        cout<<"IMPROVEMENT PHASE F.O = "<<first_phase_fo<<endl;
+        cout<<"IMPROVEMENT RELOC COST = "<<first_reloc_cost<<endl;
+        cout<<"BEST OBJECTIVE FUNCTION = "<<bestSolution.objective_function<<endl;
         cout<<"EXCESS OF BEST SOLUTION = "<<bestSolution.excess<<endl;
         cout<<"RELOC COST OF BEST SOLUTION = "<<bestSolution.reloc_cost<<endl;
         cout<<PrintMatrix(bestSolution.solution,"[","]")<<endl;
@@ -6263,8 +6178,10 @@ int main(int argc, char**argv) {
 
         cout<<"TIME ELAPSED = "<<alg_time<<endl;
 
+
         /*****************************Part to write instances***********************************************/
 
+        /*
         string answer{""};
         cout<<"Do you want to write this relocation points in the current instance? [Y/N] ";
         cin>>answer;
@@ -6282,7 +6199,7 @@ int main(int argc, char**argv) {
             }
 
             instance.close();
-        }
+        }*/
 
         /************************************************************************************************/
 
