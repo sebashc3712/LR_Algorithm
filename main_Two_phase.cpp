@@ -3907,7 +3907,7 @@ int main(int argc, char**argv) {
 
 #ifdef MDVRP
         mdcvfp mydata; // Create structure
-        mydata.penalty_reloc = 2.0; // Fixed cost to relocate a customer
+        mydata.penalty_reloc = 5.0; // Fixed cost to relocate a customer
         int mydata_tmp; // Temporal string to store the values which are not necessary
 
         ifstream data_input((testname + "/" + filename + ".txt").c_str());
@@ -5414,7 +5414,9 @@ int main(int argc, char**argv) {
 
         dist_t first_phase_fo=test[0];
         dist_t first_reloc_cost=temp_rcost;
+        dist_t first_phase_temp_excess=temp_excess;
 
+        vector<dist_t> first_phase_excess_clusters=excess_per_cluster;
         vector<vector<int>> first_phase_solution = post_lkh_clusters;
         list<vector<vector<int>>> first_phase_demand = optimal_rec_types;
 
@@ -5428,6 +5430,7 @@ int main(int argc, char**argv) {
             list<vector<vector<int>>> rec_types;
             dist_t excess;
             dist_t reloc_cost;
+            vector<dist_t> excess_clusters;
 
         };
 
@@ -5436,8 +5439,9 @@ int main(int argc, char**argv) {
         bestSolution.solution=post_lkh_clusters;
         bestSolution.objective_function=first_phase_fo;
         bestSolution.rec_types=optimal_rec_types;
-        bestSolution.excess=0.0;
-        bestSolution.reloc_cost=0.0;
+        bestSolution.excess=temp_excess;
+        bestSolution.reloc_cost=temp_rcost;
+        bestSolution.excess_clusters=excess_per_cluster;
 
         vector<int> tracking_fo;
         tracking_fo.push_back(bestSolution.objective_function);
@@ -5451,11 +5455,13 @@ int main(int argc, char**argv) {
 
         cout<<"NUMBERS OF ITERATIONS = "<<max_iterations<<endl;
 
-        int it_perturbation=7;
+        int it_perturbation=0.1*max_iterations;
 
         tabu tabu_list;
 
         vector<int> selected_operators = {0,0,0,0,0};
+
+        int increments_fo{0};
 
         for(int it{0};it<max_iterations;it++){
 
@@ -5464,6 +5470,8 @@ int main(int argc, char**argv) {
             //cout<<"Size of Tabu List = "<<tabu_list.lista.size()<<endl;
 
             tabu_list.refresh();
+
+            int temp_increment{0};
 
             //tabu_list.mostrar();
 
@@ -5533,6 +5541,7 @@ int main(int argc, char**argv) {
                             improvement=temp_imp;
                             node_o=post_lkh_clusters[clust][cust];
                             node_d=0;
+                            if(temp_imp>0){temp_increment=1;}
 
                         }
 
@@ -5572,6 +5581,7 @@ int main(int argc, char**argv) {
                                     chosen_operator="Two-Opt";
                                     node_o=post_lkh_clusters[cluster1][cust1];
                                     node_d=post_lkh_clusters[cluster1][cust2];
+                                    if(temp_imp>0){temp_increment=1;}
 
                                 }
 
@@ -5621,6 +5631,7 @@ int main(int argc, char**argv) {
                                         chosen_operator="Swap Inter-Route";
                                         node_o=post_lkh_clusters[cluster1][cust1];
                                         node_d=post_lkh_clusters[cluster2][cust2];
+                                        if(temp_imp>0){temp_increment=1;}
 
                                     }
 
@@ -5667,6 +5678,7 @@ int main(int argc, char**argv) {
                                         chosen_operator="Insertion-to-route";
                                         node_o=post_lkh_clusters[cluster1][cust1];
                                         node_d=post_lkh_clusters[cluster2][cust2];
+                                        if(temp_imp>0){temp_increment=1;}
 
                                     }
 
@@ -5900,7 +5912,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[0]+=1;
 
-                PrintMatrix(post_lkh_clusters,"[","]");
+                //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultInsertion result_insertion2;
 
@@ -5958,6 +5970,7 @@ int main(int argc, char**argv) {
                     bestSolution.reloc_cost=temp_rcost;
                     bestSolution.rec_types=optimal_rec_types;
                     bestSolution.excess=temp_excess;
+                    bestSolution.excess_clusters=excess_per_cluster;
 
                 }
 
@@ -5965,7 +5978,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[2]+=1;
 
-                PrintMatrix(post_lkh_clusters,"[","]");
+                //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultSwap result_swap2;
 
@@ -5998,6 +6011,7 @@ int main(int argc, char**argv) {
                     bestSolution.rec_types=optimal_rec_types;
                     bestSolution.excess=temp_excess;
                     bestSolution.reloc_cost=temp_rcost;
+                    bestSolution.excess_clusters=excess_per_cluster;
 
                 }
 
@@ -6005,7 +6019,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[3]+=1;
 
-                PrintMatrix(post_lkh_clusters,"[","]");
+                //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultInsertionRoute result_insertion_route;
 
@@ -6039,6 +6053,7 @@ int main(int argc, char**argv) {
                     bestSolution.rec_types=optimal_rec_types;
                     bestSolution.excess=temp_excess;
                     bestSolution.reloc_cost=temp_rcost;
+                    bestSolution.excess_clusters=excess_per_cluster;
 
                 }
 
@@ -6046,7 +6061,7 @@ int main(int argc, char**argv) {
 
                 selected_operators[1]+=1;
 
-                PrintMatrix(post_lkh_clusters,"[","]");
+                //PrintMatrix(post_lkh_clusters,"[","]");
 
                 ResultTwoOpt result_two_opt;
 
@@ -6076,6 +6091,7 @@ int main(int argc, char**argv) {
                     bestSolution.reloc_cost=temp_rcost;
                     bestSolution.rec_types=optimal_rec_types;
                     bestSolution.excess=temp_excess;
+                    bestSolution.excess_clusters=excess_per_cluster;
 
                 }
 
@@ -6089,6 +6105,23 @@ int main(int argc, char**argv) {
 //                cout<<"Insertion = "<<best_insertion_route<<endl;
 
             }
+
+            increments_fo+=temp_increment;
+
+            if(increments_fo==int(0.1*max_iterations)){
+
+
+                test[0]=bestSolution.objective_function;
+                post_lkh_clusters=bestSolution.solution;
+                optimal_rec_types=bestSolution.rec_types;
+                temp_excess=bestSolution.excess;
+                excess_per_cluster=bestSolution.excess_clusters;
+                temp_rcost=bestSolution.reloc_cost;
+
+
+                increments_fo=0;
+            }
+
 
             //cout<<"BEST SOLUTION: "<<bestSolution.objective_function<<"<****************"<<endl;
             //cout<<"TEST[0]: "<<test[0]<<"<****************"<<endl;
