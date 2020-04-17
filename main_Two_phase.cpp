@@ -3838,6 +3838,114 @@ ResultTwoOpt TwoOptOperator(int customer_1, int customer_2, vector<vector<int>> 
 
 /*****************************************************************************************************************************/
 
+
+/*************************************One-Route Operator*********************************************************************/
+
+struct OneRouteReult{
+
+    dist_t result;
+    vector<vector<int>> solution;
+    list<vector<vector<int>>> demand;
+    vector<dist_t> excess_clusters;
+    dist_t excess;
+};
+
+dist_t OneRouteOpt(int customer, vector<vector<dist_t>> Distancias, list<vector<vector<int>>> demand,
+                         vector<vector<int>> solution, dist_t excess, vector<dist_t> excess_clusters,
+                         dist_t Exceed1, vector<nclients> C_Data, mdcvfp mydata){
+
+        OneRouteReult data_to_return;
+
+        data_to_return.solution=vector<vector<int>>();
+        data_to_return.demand=list<vector<vector<int>>>();
+        data_to_return.result=0.0;
+        data_to_return.excess_clusters=vector<dist_t>();
+        data_to_return.excess=0.0;
+
+        vector<int> info_node = ClusterOfCustomer(solution,customer);
+
+        dist_t result{0.0};
+
+        if(info_node[1]==0){
+
+            result = Distancias[0][customer]+Distancias[0][solution[info_node[0]][info_node[1]+1]]-\
+                Distancias[customer][solution[info_node[0]][info_node[1]+1]];
+
+        }else if(info_node[1]!=0 && info_node[1]!=(solution[info_node[0]].size()-1)){
+
+            result = 2*Distancias[0][customer]+\
+                Distancias[solution[info_node[0]][info_node[1]-1]][solution[info_node[0]][info_node[1]+1]]-\
+                Distancias[solution[info_node[0]][info_node[1]-1]][customer]-\
+                Distancias[customer][solution[info_node[0]][info_node[1]+1]];
+
+        }else{
+
+            result = Distancias[customer][0]+Distancias[solution[info_node[0]][info_node[1]-1]][0]-\
+                Distancias[solution[info_node[0]][info_node[1]-1]][customer];
+
+        }
+
+        int temp{0};
+        temp = solution[info_node[0]][info_node[1]];
+
+        if(info_node[1]!=0){
+            solution[info_node[0]].erase(solution[info_node[0]].begin()+\
+                                         info_node[1]);
+        }else{
+            solution[info_node[0]].erase(solution[info_node[0]].begin());
+        }
+
+        vector<int> vector_temp={temp};
+        solution.push_back(vector_temp);
+
+        list<vector<vector<int>>>::iterator it1 = demand.begin();
+        if(info_node[0]!=0){
+            advance(it1,info_node[0]);
+        }
+        vector<vector<int>> vector_it1 = (*it1);
+
+        vector<int> temp_it1 = vector_it1[info_node[1]];
+        if(info_node[1]!=0){
+            vector_it1.erase(vector_it1.begin()+info_node[1]);
+        }else{
+            vector_it1.erase(vector_it1.begin());
+        }
+
+        (*it1)=vector_it1;
+
+        vector<vector<int>> vector_temp2=vector<vector<int>>();
+        vector<int> vector_temp3={1,1,1};
+        vector_temp2.push_back(vector_temp3);
+        demand.push_back(vector_temp2);
+        excess_clusters.push_back(0.0);
+
+        dist_t Exceed2{0.0};
+
+        dist_t temp_exc1 = excess_clusters[info_node[0]]-C_Data[customer-1].dem;
+
+        excess_clusters[info_node[0]]=temp_exc1;
+
+        for(int i{0};i<excess_clusters.size();i++){
+
+            if(excess_clusters[i]>0.0){
+
+                Exceed2+=excess_clusters[i];
+            }
+        }
+
+        result=result-Exceed1+(Exceed2*mydata.factor_demand_dist);
+
+        data_to_return.solution=solution;
+        data_to_return.result=result;
+        data_to_return.excess=(Exceed2*mydata.factor_demand_dist);
+        data_to_return.demand=demand;
+        data_to_return.excess_clusters=excess_clusters;
+
+
+}
+
+/*****************************************************************************************************************************/
+
 int main(int argc, char**argv) {
 
     srand (time(0));
