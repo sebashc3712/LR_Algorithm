@@ -3850,8 +3850,8 @@ struct OneRouteReult{
     dist_t excess;
 };
 
-dist_t OneRouteOpt(int customer, vector<vector<dist_t>> Distancias, list<vector<vector<int>>> demand,
-                         vector<vector<int>> solution, dist_t excess, vector<dist_t> excess_clusters,
+OneRouteReult OneRouteOpt(int customer, vector<vector<dist_t>> Distancias, list<vector<vector<int>>> demand,
+                         vector<vector<int>> solution, vector<dist_t> excess_clusters,
                          dist_t Exceed1, vector<nclients> C_Data, mdcvfp mydata){
 
         OneRouteReult data_to_return;
@@ -3898,6 +3898,7 @@ dist_t OneRouteOpt(int customer, vector<vector<dist_t>> Distancias, list<vector<
         vector<int> vector_temp={temp};
         solution.push_back(vector_temp);
 
+
         list<vector<vector<int>>>::iterator it1 = demand.begin();
         if(info_node[0]!=0){
             advance(it1,info_node[0]);
@@ -3913,11 +3914,13 @@ dist_t OneRouteOpt(int customer, vector<vector<dist_t>> Distancias, list<vector<
 
         (*it1)=vector_it1;
 
+
         vector<vector<int>> vector_temp2=vector<vector<int>>();
         vector<int> vector_temp3={1,1,1};
         vector_temp2.push_back(vector_temp3);
         demand.push_back(vector_temp2);
-        excess_clusters.push_back(0.0);
+        excess_clusters.push_back(C_Data[customer-1].dem-mydata.volumeVehicle);
+
 
         dist_t Exceed2{0.0};
 
@@ -3940,6 +3943,8 @@ dist_t OneRouteOpt(int customer, vector<vector<dist_t>> Distancias, list<vector<
         data_to_return.excess=(Exceed2*mydata.factor_demand_dist);
         data_to_return.demand=demand;
         data_to_return.excess_clusters=excess_clusters;
+
+        return data_to_return;
 
 
 }
@@ -4015,7 +4020,7 @@ int main(int argc, char**argv) {
 
 #ifdef MDVRP
         mdcvfp mydata; // Create structure
-        mydata.penalty_reloc = 5.0; // Fixed cost to relocate a customer
+        mydata.penalty_reloc = 2.0; // Fixed cost to relocate a customer
         int mydata_tmp; // Temporal string to store the values which are not necessary
 
         ifstream data_input((testname + "/" + filename + ".txt").c_str());
@@ -5567,7 +5572,7 @@ int main(int argc, char**argv) {
 
         tabu tabu_list;
 
-        vector<int> selected_operators = {0,0,0,0,0};
+        vector<int> selected_operators = {0,0,0,0,0,0};
 
         int increments_fo{0};
 
@@ -6228,6 +6233,44 @@ int main(int argc, char**argv) {
 
 
                 increments_fo=0;
+            }
+
+
+            float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+            if(temp_excess>0.0 && r2<1.0){
+
+                int temp_chosen{0};
+
+                for(int i{0};i<excess_per_cluster.size();i++){
+
+                    if(excess_per_cluster[i]>0.0){
+
+                        temp_chosen=i;
+                        break;
+
+                    }
+                }
+
+
+                int random_cust = rand()%(post_lkh_clusters[temp_chosen].size());
+
+
+                OneRouteReult temp_one_route;
+
+                temp_one_route=OneRouteOpt(post_lkh_clusters[temp_chosen][random_cust],Distancias,
+                                           optimal_rec_types,post_lkh_clusters,excess_per_cluster,temp_excess,
+                                           C_Data,mydata);
+
+
+                test[0]+=temp_one_route.result;
+                post_lkh_clusters=temp_one_route.solution;
+                optimal_rec_types=temp_one_route.demand;
+                temp_excess=temp_one_route.excess;
+                excess_per_cluster=temp_one_route.excess_clusters;
+
+                selected_operators[5]+=1;
+
             }
 
 
