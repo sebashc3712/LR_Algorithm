@@ -5574,6 +5574,10 @@ int main(int argc, char**argv) {
 
         vector<int> selected_operators = {0,0,0,0,0,0};
 
+        vector<vector<int>> distr_prob_excess = {{1,1,1},{1,1,1},{1,1,1}};
+
+        int size_prob_excess = 9;
+
         int increments_fo{0};
 
         for(int it{0};it<max_iterations;it++){
@@ -6219,26 +6223,31 @@ int main(int argc, char**argv) {
 
             }
 
-            increments_fo+=temp_increment;
+            int prob_random = rand() % (size_prob_excess)+1;
 
-            if(increments_fo==int(0.1*max_iterations)){
+            int ref_prob_excess=0;
 
+            float limit{0.0};
 
-                test[0]=bestSolution.objective_function;
-                post_lkh_clusters=bestSolution.solution;
-                optimal_rec_types=bestSolution.rec_types;
-                temp_excess=bestSolution.excess;
-                excess_per_cluster=bestSolution.excess_clusters;
-                temp_rcost=bestSolution.reloc_cost;
+            if(prob_random<=distr_prob_excess[0].size()){
 
+                limit = 0.25;
 
-                increments_fo=0;
+            }else if (prob_random<=distr_prob_excess[1].size()){
+
+                limit=0.5;
+                ref_prob_excess=1;
+
+            }else{
+
+                limit=0.75;
+                ref_prob_excess=2;
+
             }
-
 
             float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 
-            if(temp_excess>0.0 && r2<1.0){
+            if(temp_excess>0.0 && r2<limit){
 
                 int temp_chosen{0};
 
@@ -6262,6 +6271,12 @@ int main(int argc, char**argv) {
                                            optimal_rec_types,post_lkh_clusters,excess_per_cluster,temp_excess,
                                            C_Data,mydata);
 
+                if(temp_one_route.result<0.0){
+
+                    distr_prob_excess[ref_prob_excess].push_back(1);
+
+                }
+
 
                 test[0]+=temp_one_route.result;
                 post_lkh_clusters=temp_one_route.solution;
@@ -6273,10 +6288,27 @@ int main(int argc, char**argv) {
 
             }
 
+            increments_fo+=temp_increment;
+
+            if(increments_fo==int(0.1*max_iterations)){
+
+
+                test[0]=bestSolution.objective_function;
+                post_lkh_clusters=bestSolution.solution;
+                optimal_rec_types=bestSolution.rec_types;
+                temp_excess=bestSolution.excess;
+                excess_per_cluster=bestSolution.excess_clusters;
+                temp_rcost=bestSolution.reloc_cost;
+
+
+                increments_fo=0;
+            }
+
 
             //cout<<"BEST SOLUTION: "<<bestSolution.objective_function<<"<****************"<<endl;
             //cout<<"TEST[0]: "<<test[0]<<"<****************"<<endl;
         }
+
 
         for(int clust{0};clust<bestSolution.solution.size();clust++){
 
@@ -6290,6 +6322,7 @@ int main(int argc, char**argv) {
 
             }
         }
+
 
         cout<<"IMPROVEMENT PHASE F.O = "<<first_phase_fo<<endl;
         cout<<"IMPROVEMENT RELOC COST = "<<first_reloc_cost<<endl;
@@ -6362,6 +6395,11 @@ int main(int argc, char**argv) {
 
         cout<<"TIME ELAPSED = "<<alg_time<<endl;
 
+        for(int i{0};i<distr_prob_excess.size();i++){
+
+            cout<<distr_prob_excess[i].size()<<endl;
+
+        }
 
         /*****************************Part to write instances***********************************************/
 
