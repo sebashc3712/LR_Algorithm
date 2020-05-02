@@ -4020,7 +4020,7 @@ int main(int argc, char**argv) {
 
 #ifdef MDVRP
         mdcvfp mydata; // Create structure
-        mydata.penalty_reloc = 2.0; // Fixed cost to relocate a customer
+        mydata.penalty_reloc = 5.0; // Fixed cost to relocate a customer
         int mydata_tmp; // Temporal string to store the values which are not necessary
 
         ifstream data_input((testname + "/" + filename + ".txt").c_str());
@@ -4492,7 +4492,42 @@ int main(int argc, char**argv) {
 
         dist_t average_distances = sum_distances/float(count_distances);
 
-        //PrintDistanceMatrix(Distancias,"[","]");
+        PrintDistanceMatrix(Distancias,"[","]");
+
+        cout<<"[";
+        for(int i{0};i<15;i++){
+
+            cout<<"[";
+
+            for(int j{0};j<60;j++){
+
+                if(i==j){
+
+                    cout<<"1";
+
+                }else{
+
+                    cout<<"0";
+
+                }
+
+                if(j!=59){
+
+                    cout<<",";
+
+                }
+
+            }
+            cout<<"],"<<endl;
+        }
+        cout<<"]"<<endl;
+
+        for(int i{0};i<C_Data.size();i++){
+
+            cout<<C_Data[i].dem<<",";
+        }
+
+        cout<<endl;
 
 #ifdef NOLKH
         string tmpstr;
