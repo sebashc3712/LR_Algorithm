@@ -2262,7 +2262,7 @@ int PrintDistanceMatrix(vector <vector <dist_t>> matrix, string symbol_in, strin
             }
         }
 
-        cout<<symbol_out<<endl;
+        cout<<symbol_out<<","<<endl;
 
     }
 
@@ -4494,14 +4494,18 @@ int main(int argc, char**argv) {
 
         PrintDistanceMatrix(Distancias,"[","]");
 
+        int reloc_points_reference{21};
+
         cout<<"[";
-        for(int i{0};i<15;i++){
+        for(int i{0};i<21;i++){
 
             cout<<"[";
 
-            for(int j{0};j<60;j++){
+            for(int j{0};j<84;j++){
 
-                if(i==j){
+                if(i==j || j==reloc_points_reference ||
+                   j==reloc_points_reference+1 ||
+                   j==reloc_points_reference+2){
 
                     cout<<"1";
 
@@ -4511,7 +4515,7 @@ int main(int argc, char**argv) {
 
                 }
 
-                if(j!=59){
+                if(j!=83){
 
                     cout<<",";
 
@@ -4519,6 +4523,7 @@ int main(int argc, char**argv) {
 
             }
             cout<<"],"<<endl;
+            reloc_points_reference+=3;
         }
         cout<<"]"<<endl;
 
@@ -5599,7 +5604,7 @@ int main(int argc, char**argv) {
 
         cout<<"IMPROVEMENT PHASE..."<<endl;
 
-        int max_iterations = 1000000/pow(mydata.ncustomers,2);
+        int max_iterations = (1000000/pow(mydata.ncustomers,2))*10;
 
         cout<<"NUMBERS OF ITERATIONS = "<<max_iterations<<endl;
 
