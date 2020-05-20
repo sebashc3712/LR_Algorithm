@@ -4020,7 +4020,7 @@ int main(int argc, char**argv) {
 
 #ifdef MDVRP
         mdcvfp mydata; // Create structure
-        mydata.penalty_reloc = 5.0; // Fixed cost to relocate a customer
+        mydata.penalty_reloc = 2.0; // Fixed cost to relocate a customer
         int mydata_tmp; // Temporal string to store the values which are not necessary
 
         ifstream data_input((testname + "/" + filename + ".txt").c_str());
@@ -4494,14 +4494,14 @@ int main(int argc, char**argv) {
 
         PrintDistanceMatrix(Distancias,"[","]");
 
-        int reloc_points_reference{21};
+        int reloc_points_reference{75};
 
         cout<<"[";
-        for(int i{0};i<21;i++){
+        for(int i{0};i<75;i++){
 
             cout<<"[";
 
-            for(int j{0};j<84;j++){
+            for(int j{0};j<300;j++){
 
                 if(i==j || j==reloc_points_reference ||
                    j==reloc_points_reference+1 ||
@@ -4515,7 +4515,7 @@ int main(int argc, char**argv) {
 
                 }
 
-                if(j!=83){
+                if(j!=299){
 
                     cout<<",";
 
